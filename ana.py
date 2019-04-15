@@ -51,4 +51,4 @@ class bote(discord.Client):
             else:
                 await channel.send('\U0000263A I win!')
 client = bote()
-client.run(r('token.txt'))
+client.run(r('token.txt').strip())
