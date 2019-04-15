@@ -50,5 +50,16 @@ class bote(discord.Client):
                 
             else:
                 await channel.send('\U0000263A I win!')
+
+        if m == 'coinflip':
+            coin = rand(1,2)
+            if coin == 1:
+                coin = 'heads!'
+            else:
+                coin = 'tails!'
+            await channel.send('Flipping...')
+            asyncio.sleep(3)
+            await channel.send("\U0001F4B0 It's " + coin)
+            
 client = bote()
 client.run(r('token.txt').strip())
