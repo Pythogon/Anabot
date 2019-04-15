@@ -1,0 +1,5 @@
+Welcome to Anabot!
+**++help** - This message.
+**++ping** - Tests connection.
+**++dice** - Rolls a six sided dice.
+**++rps <r/p/s>** - Play rock paper scissors with me!
