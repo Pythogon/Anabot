@@ -72,7 +72,7 @@ class bote(discord.Client):
                     await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
                     return
                 try:
-                    int(input(args),16)
+                    potato = int(input(args),16)
                 except:
                     await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
                     return
