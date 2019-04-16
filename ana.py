@@ -62,9 +62,20 @@ class bote(discord.Client):
             asyncio.sleep(3)
             await channel.send("<:coins:567649563968667648> It's " + coin)
 
-        if m == 'colour':
-            c = rand(1,16777215)
-            c = hex(c).split('x')[-1]
+        if m.startswith('colour'):
+            args = m[7:]
+            if args == '':
+                c = rand(1,16777215)
+                c = hex(c).split('x')[-1]
+            else:
+                if len(args) is not 6:
+                    await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
+                    return
+                try:
+                    int(input(args),16)
+                except:
+                    await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
+                    return
             cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
