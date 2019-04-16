@@ -1,5 +1,6 @@
-import discord,asyncio,os,cairosvg,cleverbot_io
+import discord,asyncio,os,cairosvg
 from random import randint as rand
+from translate import Translator
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
@@ -9,27 +10,27 @@ class bote(discord.Client):
         print('Logged on!')
         status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
         await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
-        
+
     async def on_message(self, message):
         channel = message.channel
         m = message.content.replace(p,'').lower()
         try: print(str(message.author.id) + ':', message.content)
         except: print('Error')
-		
-        if message.author.bot: 
+
+        if message.author.bot:
             return
-		
+
         if channel.id == 567685702205046785:
             await message.add_reaction('👍')
             await message.add_reaction('👎')
             return
-		
+
         if message.author.id == 156019409658314752:
             await message.add_reaction('❤')
 
         if message.content.startswith(p) is not True:
             return
-        
+
         if m == 'ping':
             await channel.send('Pong!')
 
@@ -51,13 +52,13 @@ class bote(discord.Client):
             me = rand(1,3)
             await channel.send('I pick ' + {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me))
             asyncio.sleep(3)
-            
+
             if me == player:
                 await channel.send("\U0001F610 It's a tie.")
-            
+
             elif player == 1 and me == 3 or player == 2 and me == 1 or player == 3 and me == 2:
                 await channel.send('\U0001F622 You win...')
-                
+
             else:
                 await channel.send('\U0000263A I win!')
 
@@ -89,7 +90,7 @@ class bote(discord.Client):
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
-			
+
         if m.startswith('order'):
             args = m[6:]
             if args == '':
@@ -98,8 +99,19 @@ class bote(discord.Client):
             else:
                 kitchen = client.get_channel(567702425717178391)
                 await kitchen.send(message.author.name + ' has ordered '+ args +' in <#'+str(channel.id)+'>.')
-                await channel.send("\U0001F44D We'll get that to you ASAP!")				
-            
+                await channel.send("\U0001F44D We'll get that to you ASAP!")
+
+        if m.startswith('translate'):
+            lang = m[10:]
+            todo = m[13:]
+            try:
+                if len(lang) is not 2:
+                    raise ValueError
+                trans = Translator(to_lang=lang)
+                await channel.send('That would be ' + trans.translate(todo))
+			except:
+                await channel.send("\U0001F6AB something there didn't quite work. Please check your language code.")
+
 client = bote()
 file = r('token.txt').strip().split('\n')
 client.run(file[0])
