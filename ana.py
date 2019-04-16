@@ -3,13 +3,13 @@ from random import randint as rand
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
-kitchen = client.get_channel(567702425717178391)
 p = '='
 class bote(discord.Client):
     async def on_ready(self):
         print('Logged on!')
         status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
         await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
+        kitchen = client.get_channel(567702425717178391)
         
     async def on_message(self, message):
         channel = message.channel
