@@ -105,11 +105,11 @@ class bote(discord.Client):
             cache = list(m)
             lang = cache[10]+cache[11]
             todo = m[13:]
-            if len(lang) is not 2:
-                    raise ValueError
-            trans = Translator(to_lang=lang)
-            await channel.send('That would be ' + trans.translate(todo))
-            await channel.send("\U0001F6AB something there didn't quite work. Please check your language code.")
+            try:
+                trans = Translator(to_lang=lang)
+                await channel.send('That would be ' + trans.translate(todo)+'.')
+            except:
+                await channel.send("\U0001F6AB something there didn't quite work. Please check your language code.")
 
 client = bote()
 file = r('token.txt').strip().split('\n')
