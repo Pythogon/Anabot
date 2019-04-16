@@ -12,6 +12,10 @@ class bote(discord.Client):
         
     async def on_message(self, message):
         channel = message.channel
+        m = message.content.replace(p,'').lower()
+        args = m
+        args.partition(" ")
+        args = args[2]
         try: print(str(message.author.id) + ':', message.content)
         except: print('Error')
 		
@@ -29,10 +33,6 @@ class bote(discord.Client):
         if message.content.startswith(p) is not True:
             return
         
-        m = message.content.replace(p,'').lower()
-        args = m
-		args.partition(" ")
-		args = args[2]
         if m == 'ping':
             await channel.send('Pong!')
 
