@@ -34,8 +34,7 @@ class bote(discord.Client):
             await channel.send('Pong!')
 
         if m == 'help':
-		    await client.send_message(message.author, r("help.txt"))
-            await channel.send(r('help.txt'))
+            await client.send_message(message.author, r("help.txt"))
 
         if m == 'dice':
             await channel.send('\U0001F3B2 Rolling a 6 sided dice...')
