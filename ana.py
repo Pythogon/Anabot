@@ -3,6 +3,7 @@ from random import randint as rand
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
+kitchen = client.get_channel(567702425717178391)
 p = '='
 class bote(discord.Client):
     async def on_ready(self):
@@ -30,6 +31,7 @@ class bote(discord.Client):
             return
         
         m = message.content.replace(p,'').lower()
+		args = m.split(' ').pop(0).join(' ')
         if m == 'ping':
             await channel.send('Pong!')
 
@@ -72,7 +74,6 @@ class bote(discord.Client):
             await channel.send("<:coins:567649563968667648> It's " + coin)
 
         if m.startswith('colour'):
-            args = m[7:]
             if args == '':
                 c = rand(1,16777215)
                 c = hex(c).split('x')[-1]
@@ -89,7 +90,14 @@ class bote(discord.Client):
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
-		
+			
+        if m.startswith('order'):
+            if args == '':
+                await channel.send('\U0001F6AB Sorry, but you need to order something.')
+                return
+            else:
+                await kitchen.send(message.author + ' has ordered '+args+' in <#'+channel.id+'>.')
+                await channel.send("? We'll get that to you ASAP!")				
             
 client = bote()
 file = r('token.txt').strip().split('\n')
