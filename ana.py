@@ -16,7 +16,7 @@ class bote(discord.Client):
         except: print('Error')
         
         if channel.id == 567685702205046785:
-            await message.add_reaction'👍')
+            await message.add_reaction('👍')
             await message.add_reaction('👎')
             return
 		
