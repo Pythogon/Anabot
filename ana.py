@@ -68,7 +68,7 @@ class bote(discord.Client):
             cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
-            await channel.send('Enjoy this lovely shade of '+str(c)+' !')
+            await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
             
 client = bote()
 client.run(r('token.txt').strip())
