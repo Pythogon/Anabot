@@ -30,7 +30,9 @@ class bote(discord.Client):
             return
         
         m = message.content.replace(p,'').lower()
-        args = ' '.join(m.split()[1:])
+        args = m
+		args.partition(" ")
+		args = args[2]
         if m == 'ping':
             await channel.send('Pong!')
 
