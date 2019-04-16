@@ -1,4 +1,4 @@
-import discord,asyncio,os,cairosvg
+import discord,asyncio,os,cairosvg,cleverbot_io
 from random import randint as rand
 def r(fname):
     with open(fname, 'r') as file:
@@ -89,7 +89,12 @@ class bote(discord.Client):
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
+		
+		if m.startswith('chat'):
+			args = m[5:]
+			await channel.send(chat.ask(args))
             
 client = bote()
+chat = cleverbot_io.set(user=file[1],key=file[2])
 file = r('token.txt').split('\n')
 client.run(file[0])
