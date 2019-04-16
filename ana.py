@@ -9,7 +9,6 @@ class bote(discord.Client):
         print('Logged on!')
         status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
         await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
-        kitchen = client.get_channel(567702425717178391)
         
     async def on_message(self, message):
         channel = message.channel
@@ -96,6 +95,7 @@ class bote(discord.Client):
                 await channel.send('\U0001F6AB Sorry, but you need to order something.')
                 return
             else:
+                kitchen = client.get_channel(567702425717178391)
                 await kitchen.send(message.author + ' has ordered '+args+' in <#'+channel.id+'>.')
                 await channel.send("? We'll get that to you ASAP!")				
             
