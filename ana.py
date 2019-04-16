@@ -90,9 +90,9 @@ class bote(discord.Client):
             os.remove('image.png')
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
 		
-		if m.startswith('chat'):
-			args = m[5:]
-			await channel.send(chat.ask(args))
+        if m.startswith('chat'):
+            args = m[5:]
+            await channel.send(chat.ask(args))
             
 client = bote()
 chat = cleverbot_io.set(user=file[1],key=file[2])
