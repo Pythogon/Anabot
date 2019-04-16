@@ -76,6 +76,7 @@ class bote(discord.Client):
                 except:
                     await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
                     return
+                c = args
             cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
             await channel.send(file=discord.File('image.png'))
             os.remove('image.png')
