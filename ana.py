@@ -102,7 +102,8 @@ class bote(discord.Client):
                 await channel.send("\U0001F44D We'll get that to you ASAP!")
 
         if m.startswith('translate'):
-            lang = m[10:11]
+            cache = list(m)
+            lang = cache[10]+cache[11]
             todo = m[13:]
             if len(lang) is not 2:
                     raise ValueError
