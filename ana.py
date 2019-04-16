@@ -14,7 +14,10 @@ class bote(discord.Client):
         channel = message.channel
         try: print(str(message.author.id) + ':', message.content)
         except: print('Error')
-        
+		
+		if message.author.bot: 
+			return
+		
         if channel.id == 567685702205046785:
             await message.add_reaction('👍')
             await message.add_reaction('👎')
