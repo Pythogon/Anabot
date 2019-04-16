@@ -8,6 +8,7 @@ __Utility__
 __Random__
 **++coinflip** - Flip a coin.
 **++dice** - Rolls a six sided dice.
+**++colour** - Gives you a random colour.
 
 __Games__
 **++rps <r/p/s>** - Play rock paper scissors with me!
