@@ -63,7 +63,7 @@ class bote(discord.Client):
             await channel.send("<:coins:567649563968667648> It's " + coin)
 
         if m == 'colour':
-            c = rand(1,256256256)
+            c = rand(1,16777215)
             c = hex(c).split('x')[-1]
             cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
             await channel.send(file=discord.File('image.png'))
