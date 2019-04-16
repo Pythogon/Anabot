@@ -7,7 +7,8 @@ p = '++'
 class bote(discord.Client):
     async def on_ready(self):
         print('Logged on!')
-        await client.change_presence(activity=discord.Game(name='++help'))
+        status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
+        await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
         
     async def on_message(self, message):
         channel = message.channel
@@ -37,7 +38,7 @@ class bote(discord.Client):
              'p': 2,
              's': 3}.get(m[4:],4)
             if player == 4:
-                await channel.send('\U0001F6AB Please use ++rps `<r/p/s>` to play.')
+                await channel.send('\U0001F6AB Please use '+ p + 'rps `<r/p/s>` to play.')
                 return
             me = rand(1,3)
             await channel.send('I pick ' + {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me))
@@ -68,13 +69,12 @@ class bote(discord.Client):
                 c = rand(1,16777215)
                 c = hex(c).split('x')[-1]
             else:
-                if len(args) is not 6:
-                    await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
-                    return
                 try:
-                    potato = int(args,16)
+                    if len(args) is not 6:
+                        raise ValueError
+                    int(args,16)
                 except:
-                    await channel.send('\U0001F6AB Sorry. Either do ++colour or ++colour <6 letter hex> to use this command.')
+                    await channel.send('\U0001F6AB Sorry. Either do '+ p + 'colour or ' + p + 'colour <6 letter hex> to use this command.')
                     return
                 c = args
             cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
