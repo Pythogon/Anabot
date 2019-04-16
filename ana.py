@@ -4,7 +4,7 @@ from translate import Translator
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
-p = '='
+p = '/'
 class bote(discord.Client):
     async def on_ready(self):
         print('Logged on!')
