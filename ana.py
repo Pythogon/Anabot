@@ -1,4 +1,4 @@
-import discord,asyncio,cairosvg,os
+import discord,asyncio,os,cairosvg
 from random import randint as rand
 def r(fname):
     with open(fname, 'r') as file:
@@ -91,4 +91,5 @@ class bote(discord.Client):
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
             
 client = bote()
-client.run(r('token.txt').strip())
+file = r('token.txt').split('\n')
+client.run(file[0])
