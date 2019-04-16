@@ -96,7 +96,7 @@ class bote(discord.Client):
                 return
             else:
                 kitchen = client.get_channel(567702425717178391)
-                await kitchen.send(message.author.name + ' has ordered '+args+' in <#'+channel.id+'>.')
+                await kitchen.send(message.author.name + ' has ordered '+args+' in <#'+str(channel.id)+'>.')
                 await channel.send("? We'll get that to you ASAP!")				
             
 client = bote()
