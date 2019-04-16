@@ -7,10 +7,8 @@ p = '++'
 class bote(discord.Client):
     async def on_ready(self):
         print('Logged on!')
-        while client.is_ready():
-            status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
-            await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
-            asyncio.sleep(150)
+        status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
+        await client.change_presence(activity=discord.Game(name=status + ' | '+ p + 'help'))
         
     async def on_message(self, message):
         channel = message.channel
