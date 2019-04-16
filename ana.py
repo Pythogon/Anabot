@@ -13,9 +13,6 @@ class bote(discord.Client):
     async def on_message(self, message):
         channel = message.channel
         m = message.content.replace(p,'').lower()
-        args = m
-        args.partition(" ")
-        args = args[2]
         try: print(str(message.author.id) + ':', message.content)
         except: print('Error')
 		
@@ -75,6 +72,7 @@ class bote(discord.Client):
             await channel.send("<:coins:567649563968667648> It's " + coin)
 
         if m.startswith('colour'):
+		    args = m[7:]
             if args == '':
                 c = rand(1,16777215)
                 c = hex(c).split('x')[-1]
@@ -93,12 +91,13 @@ class bote(discord.Client):
             await channel.send('Enjoy this lovely shade of #'+str(c)+'!')
 			
         if m.startswith('order'):
+		    args = m[6:]
             if args == '':
                 await channel.send('\U0001F6AB Sorry, but you need to order something.')
                 return
             else:
                 kitchen = client.get_channel(567702425717178391)
-                await kitchen.send(message.author.name + ' has ordered '+args+' in <#'+str(channel.id)+'>.')
+                await kitchen.send(message.author.name + ' has ordered '+ args +' in <#'+str(channel.id)+'>.')
                 await channel.send("\U0001F44D We'll get that to you ASAP!")				
             
 client = bote()
