@@ -95,6 +95,6 @@ class bote(discord.Client):
             await channel.send(chat.ask(args))
             
 client = bote()
-chat = cleverbot_io.set(user=file[1],key=file[2])
 file = r('token.txt').split('\n')
+chat = cleverbot_io.set(user=file[1],key=file[2])
 client.run(file[0])
