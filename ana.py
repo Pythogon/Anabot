@@ -97,7 +97,7 @@ class bote(discord.Client):
             else:
                 kitchen = client.get_channel(567702425717178391)
                 await kitchen.send(message.author.name + ' has ordered '+args+' in <#'+str(channel.id)+'>.')
-                await channel.send("ðŸ‘ We'll get that to you ASAP!")				
+                await channel.send("\U0001F44D We'll get that to you ASAP!")				
             
 client = bote()
 file = r('token.txt').strip().split('\n')
