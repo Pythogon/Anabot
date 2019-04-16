@@ -109,7 +109,7 @@ class bote(discord.Client):
                     raise ValueError
                 trans = Translator(to_lang=lang)
                 await channel.send('That would be ' + trans.translate(todo))
-			except:
+            except:
                 await channel.send("\U0001F6AB something there didn't quite work. Please check your language code.")
 
 client = bote()
