@@ -1,5 +1,13 @@
-Welcome to Anabot!
+__**Help**__
+Welcome to Anabot! Anabot is a fun utility bot designed to enrich your experience on the server. This bot is custom coded by Ciel for Be.
+
+__Utility__
 **++help** - This message.
 **++ping** - Tests connection.
+
+__Random__
+**++coinflip** - Flip a coin.
 **++dice** - Rolls a six sided dice.
+
+__Games__
 **++rps <r/p/s>** - Play rock paper scissors with me!

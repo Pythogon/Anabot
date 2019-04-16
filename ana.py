@@ -1,4 +1,4 @@
-import discord,asyncio
+import discord,asyncio,cairosvg,os
 from random import randint as rand
 def r(fname):
     with open(fname, 'r') as file:
@@ -13,9 +13,10 @@ class bote(discord.Client):
         channel = message.channel
         try: print(str(message.author.id) + ':', message.content)
         except: print('Error')
+            
         if message.author.id == 156019409658314752:
             await message.add_reaction('❤')
-            
+
         if message.content.startswith(p) is not True:
             return
         
@@ -59,7 +60,15 @@ class bote(discord.Client):
                 coin = 'tails!'
             await channel.send('Flipping...')
             asyncio.sleep(3)
-            await channel.send("\U0001F4B0 It's " + coin)
+            await channel.send("<:coins:567649563968667648> It's " + coin)
+
+        if m == 'colour':
+            c = rand(1,256256256)
+            c = hex(c).split('x')[-1]
+            cairosvg.svg2png(url='http://www.thecolorapi.com/id?format=svg&hex='+c,write_to='image.png')
+            await channel.send(file=discord.File('image.png'))
+            os.remove('image.png')
+            await channel.send('Enjoy!')
             
 client = bote()
 client.run(r('token.txt').strip())
