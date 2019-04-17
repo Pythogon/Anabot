@@ -102,7 +102,8 @@ class bote(discord.Client):
                 await channel.send("\U0001F44D We'll get that to you ASAP!")
 
         if m.startswith('translate'):
-            cache = m.split(' ')
+            command, blank, args = m.partition(' ')
+            lang, blank, todo = args.partition(" ")
             await channel.send('That would be ' + interpret.translate(text=todo, dest=lang).text)
 
 client = bote()
