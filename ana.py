@@ -105,7 +105,7 @@ class bote(discord.Client):
             cache = list(m)
             lang = cache[10]+cache[11]
             todo = m[13:]
-            await channel.send('That would be ' + interpret.translate(text=todo, dest=lang))
+            await channel.send('That would be ' + interpret.translate(text=todo, dest=lang).text)
 
 client = bote()
 interpret = Translator()
