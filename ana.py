@@ -25,8 +25,9 @@ class bote(discord.Client):
             await message.add_reaction('👎')
             return
 
-        if message.author.id == 156019409658314752:
-            await message.add_reaction('❤')
+        if message.author.id == 156019409658314752 or message.author.id == 233180749891633152:
+            if m == 'clearchat':
+                await channel.send(r('whitespace.txt'))
 
         if message.content.startswith(p) is not True:
             return
