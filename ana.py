@@ -104,7 +104,10 @@ class bote(discord.Client):
         if m.startswith('translate'):
             command, blank, args = m.partition(' ')
             lang, blank, todo = args.partition(" ")
-            await channel.send('That would be ' + interpret.translate(text=todo, dest=lang).text)
+            try:
+                await channel.send('That would be `' + interpret.translate(text=todo, dest=lang).text + '`')
+            except:
+                await channel.send('\U0001F6AB Sorry but '+ lang + " isn't a valid language code. Please try again.")
 
 client = bote()
 interpret = Translator()
