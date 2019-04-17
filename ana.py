@@ -1,6 +1,6 @@
 import discord,asyncio,os,cairosvg
 from random import randint as rand
-from translate import Translator
+from py_translator import Translator
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
@@ -105,12 +105,9 @@ class bote(discord.Client):
             cache = list(m)
             lang = cache[10]+cache[11]
             todo = m[13:]
-            try:
-                trans = Translator(to_lang=lang)
-                await channel.send('That would be ' + trans.translate(todo)+'.')
-            except:
-                await channel.send("\U0001F6AB something there didn't quite work. Please check your language code.")
+            await channel.send('That would be ' + interpret.translate(text=todo, dest=lang))
 
 client = bote()
+interpret = Translator()
 file = r('token.txt').strip().split('\n')
 client.run(file[0])
