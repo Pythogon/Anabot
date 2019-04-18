@@ -193,7 +193,7 @@ async def pydict(ctx, word):
 @bot.command(aliases=['copy','repeat'])
 async def echo(ctx, *tosay):
     """
-    Get the bot to say anything you want!
+    Get the bot to say anything you want
     """
     tosay = ' '.join(tosay)
     tosay = tosay.replace('@everyone','`@everyone`')
