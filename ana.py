@@ -14,8 +14,8 @@ class ana(commands.Bot):
     async def on_ready(self):
         print('Logged on!')
     async def on_message(self,message):
-        if message.content.startswith(f'<@self.user.id>'):
-            message.add_reaction('❤')
+        if message.content.startswith(f'<@{self.user.id}>'):
+            await message.add_reaction('❤')
             return
         if message.author.bot:
             return
