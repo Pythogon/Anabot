@@ -19,10 +19,6 @@ class ana(commands.Bot):
             return
         if message.author.bot:
             return
-        if message.channel.id == 567685702205046785:
-            await message.add_reaction('👍')
-            await message.add_reaction('👎')
-            return
         try:
             print(f'{message.author.name} ({message.author.id}) | {message.content}')
         except:
@@ -32,9 +28,13 @@ class ana(commands.Bot):
         message = reaction.message
         if message.author.bot:
             return
+        if message.channel.id == 567685702205046785:
+            await message.add_reaction(reaction.emoji)
+            return
         starboard = bot.get_channel(568450985098215425)
-        if len(message.reactions) >= 3:
+        if len(message.reactions) == 3:
             msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
+            await starboard.send(msg.jump_url)
             await msg.add_reaction('⭐')
 
 
