@@ -7,7 +7,7 @@ from reportlab.graphics import renderPM
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
-p = '-'
+p = '['
 status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
 
 class ana(commands.Bot):
