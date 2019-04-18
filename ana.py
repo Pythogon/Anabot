@@ -4,10 +4,11 @@ from random import randint as rand
 from py_translator import Translator
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
+from PyDictionary import PyDictionary
 def r(fname):
     with open(fname, 'r') as file:
         return file.read()
-p = '['
+p = '[]'
 status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
 
 class ana(commands.Bot):
@@ -24,6 +25,9 @@ class ana(commands.Bot):
         except:
             print('Err #1')
         return await bot.process_commands(message)
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.BadArgument):
+            return await ctx.send('\U0001F6AB This command either needs an argument or the argument entered is incorrect. Please try again.')
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         if message.author.bot:
@@ -157,6 +161,34 @@ async def avatar(ctx, user: discord.User):
     url = user.avatar_url
     await ctx.send(url)
 
+@bot.command()
+async def invite(ctx):
+    """
+    Invite users to the server!
+    """
+    invite_link = 'https://discord.gg/Vfyc358'
+    await ctx.send('The bot is private, but you can still invite people to the server!\nOur invite link is {}, feel free to invite anyone!'.format(invite_link))
+
+@bot.command(name = 'dictionary', aliases=['dict','define'])
+async def pydict(ctx, word):
+    try:
+        meaning = dictionary.meaning(word)
+    except:
+        await ctx.send("Sorry, but that's not a word I know.")
+    grape = ''
+    orange = list(meaning.items())
+    for x in range(len(list(orange))):
+            pear = list(orange[x])
+            carrot = str(pear[0])
+            grape += f'__**{carrot}**__\n\n'
+            for z in range(len(pear[1])):
+                berry = str(pear[1][z])
+                grape += f'{z+1}: {berry}\n'
+            grape += '\n'
+    await ctx.send(f'{grape}Source: WordNet')
+
+
 tokens = r('token.txt').split('\n')
 interpret = Translator()
+dictionary = PyDictionary()
 bot.run(tokens[0])
