@@ -192,10 +192,13 @@ async def pydict(ctx, word):
 
 @bot.command(aliases=['copy','repeat'])
 async def echo(ctx, *tosay):
+    """
+    Get the bot to say anything you want!
+    """
     tosay = ' '.join(tosay)
     tosay = tosay.replace('@everyone','`@everyone`')
     tosay = tosay.replace('@here','`@here`')
-    await ctx.send(tosay)
+    await ctx.send('{}\n*Echoed from <@{}>.*'.format(tosay, ctx.author.id))
 
 
 tokens = r('token.txt').split('\n')
