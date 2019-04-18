@@ -28,6 +28,15 @@ class ana(commands.Bot):
         except:
             print('Err #1')
         return await bot.process_commands(message)
+    async def on_reaction_add(self, reaction, user):
+        message = reaction.message
+        if message.author.bot:
+            return
+        starboard = bot.get_channel(568450985098215425)
+        if len(message.reactions) >= 3:
+            msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
+            await msg.add_reaction('⭐')
+
 
 bot = ana(activity=discord.Game(name=f'{status} | {p}help'), command_prefix=p)
 
@@ -99,7 +108,7 @@ async def translate(ctx, to, *text):
     try:
         await ctx.send(f'That would be `{interpret.translate(text=text, dest=to).text}`')
     except:
-        await ctx.send("\U0001F6AB Sorry but {to} isn't a valid language code. Please try again.")
+        await ctx.send(f"\U0001F6AB Sorry but {to} isn't a valid language code. Please try again.")
 
 @bot.command(name='colour', aliases = ['color'])
 async def colour_(ctx, *colour):
@@ -129,6 +138,9 @@ async def colour_(ctx, *colour):
 
 @bot.command(name='order', aliases = ['food','foodme'])
 async def order_(ctx, *order):
+    """
+    Order food from FoodNet
+    """
     kitchen = bot.get_channel(567702425717178391)
     if order == ():
         await ctx.send(f"You can't order nothing. Do {p}order <your order>.")
@@ -139,6 +151,9 @@ async def order_(ctx, *order):
 
 @bot.command()
 async def avatar(ctx, user: discord.User):
+    """
+    Fetch a user's avatar
+    """
     url = user.avatar_url
     await ctx.send(url)
 
