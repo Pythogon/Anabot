@@ -171,6 +171,9 @@ async def invite(ctx):
 
 @bot.command(name = 'dictionary', aliases=['dict','define'])
 async def pydict(ctx, word):
+    """
+    Get word definitions (unstable)
+    """
     try:
         meaning = dictionary.meaning(word)
     except:
@@ -186,6 +189,13 @@ async def pydict(ctx, word):
                 grape += f'{z+1}: {berry}\n'
             grape += '\n'
     await ctx.send(f'{grape}Source: WordNet')
+
+@bot.command(aliases=['copy','repeat'])
+async def echo(ctx, *tosay):
+    tosay = ' '.join(tosay)
+    tosay = tosay.replace('@everyone','`@everyone`')
+    tosay = tosay.replace('@here','`@here`')
+    await ctx.send(tosay)
 
 
 tokens = r('token.txt').split('\n')
