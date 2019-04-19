@@ -74,7 +74,6 @@ class ana(commands.Bot): # Let's define our least favourite bot
         starboard = bot.get_channel(568450985098215425)
         if len(message.reactions) == 3:
             msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
-            await starboard.send(msg.jump_url)
             await msg.add_reaction('⭐')
 
 
@@ -288,7 +287,7 @@ async def gaydar(ctx, user: discord.User):
     Tells you how gay someone is according to Anabot's revolutionary random number generator
     """
     try:
-        with open('scores.txt', 'r') as json_file:
+        with open('local_Store/scores.txt', 'r') as json_file:
             scores = json.load(json_file)
     except:
         await ctx.send('ERR')
@@ -301,7 +300,7 @@ async def gaydar(ctx, user: discord.User):
         embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
         score = rand(1,10)
         scores[str(user.id)] = str(score)
-        with open('scores.txt', 'w') as outfile:
+        with open('local_Store/scores.txt', 'w') as outfile:
             json.dump(scores, outfile)
 
     msg = await ctx.send(embed=embed)
@@ -321,7 +320,7 @@ async def gaydar(ctx, user: discord.User):
     await asyncio.sleep(2)
     await msg.edit(embed=embed)
 
-@bot.command(name = 'currency', aliases=['forex','convert'])
+@bot.command(name = 'currency', aliases=['forex','convert','money','con'])
 async def currency_(ctx, amount: int, currencyfrom, currencyto):
     if len(currencyfrom) is not 3 or len(currencyto) is not 3:
         raise RNAE
@@ -334,7 +333,10 @@ async def currency_(ctx, amount: int, currencyfrom, currencyto):
     embed.add_field(name='{} {} is {:.2f} {}'.format(amount,currencyfrom,end,currencyto),value='Rate: 1 {} to {:.2f} {}'.format(currencyfrom,rate,currencyto))
     embed.set_footer(text='Source: Forex')
     await ctx.send(embed=embed)
-tokens = r('token.txt').split('\n')
+
+
+
+tokens = r('local_Store/token.txt').split('\n')
 interpret = Translator()
 dictionary = PyDictionary()
 currency = CR()
