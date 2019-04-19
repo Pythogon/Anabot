@@ -1,4 +1,4 @@
-import asyncio,os,discord
+import asyncio,os,discord # Importing
 from discord.ext import commands
 from random import randint as rand
 from py_translator import Translator
@@ -6,31 +6,31 @@ from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
 def r(fname):
-    with open(fname, 'r') as file:
+    with open(fname, 'r') as file: # File read function
         return file.read()
-p = '[]'
-status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5))
+p = '|'
+status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5)) # Random status
 
-class ana(commands.Bot):
-    async def on_ready(self):
+class ana(commands.Bot): # Let's define our least favourite bot
+    async def on_ready(self): # Setup
         print('Logged on!')
-    async def on_message(self,message):
+    async def on_message(self,message): # Processisng custom features
         if message.content.startswith(f'<@{self.user.id}>'):
-            await message.add_reaction('❤')
+            await message.add_reaction('❤') # Heart on @Anabot
             return
-        if message.author.bot:
+        if message.author.bot: # Stopping bot chaining
             return
         try:
-            print(f'{message.author.name} ({message.author.id}) | {message.content}')
+            print(f'{message.author.name} ({message.author.id}) | {message.content}') # Spying on everyone (message recording for moderation)
         except:
-            print('Err #1')
-        return await bot.process_commands(message)
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            embed = discord.Embed(title='Error',color=0xff0000)
-            embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.")
+            print('Err #1') # Used if user uses unicode that the Python parser doesn't like
+        return await bot.process_commands(message) # Command running
+    async def on_command_error(self, ctx, error): # Error handling
+        if isinstance(error, commands.BadArgument): # Catching one singular error type (the most common one)
+            embed = discord.Embed(title='Error',color=0xff0000) # New embed
+            embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.") # Message
             embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
-            return await ctx.send(embed = embed)
+            return await ctx.send(embed = embed) # Send
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         if message.author.bot:
@@ -220,13 +220,11 @@ async def pydict(ctx, word):
         meaning = dictionary.meaning(word)
     except:
         await ctx.send("Sorry, but that's not a word I know.")
-    grape = ''
     orange = list(meaning.items())
     for x in range(len(list(orange))):
             pear = list(orange[x])
             carrot = str(pear[0])
             embed = discord.Embed(title=carrot,colour=0xffffff,inline=True)
-            peach = ''
             for z in range(len(pear[1])):
                 berry = str(pear[1][z])
                 embed.add_field(name=f'{z+1}',value = berry)
@@ -242,6 +240,27 @@ async def echo(ctx, *tosay):
     embed = discord.Embed(title=tosay,color=0xffef73)
     embed.add_field(name=f'Echoed from {ctx.author.name}',value=f'Do you want me to say something? If so do {p}echo [text to say].')
     await ctx.send(embed=embed)
+
+@bot.command(aliases=['howgay','gay'])
+async def gaydar(ctx, user: discord.User):
+    """
+    Tells you how gay someone is according to Anabot's revolutionary random number generator
+    """
+    score = {156019409658314752: 10}.get(user.id, rand(1,10))
+    varset = {1: ['{} is as straight as an arrow',0xffffff],
+    2: ['{} is straight',0xffe9ff],
+    3: ['{} is straight... probably',0xffcbff],
+    4: ["I think {}'s straight, but I don't know",0xff97ff],
+    5: ['Actually, I think {} has a bit of gay in them',0xff83ff],
+    6: ["I think {}'s gay, but I don't know",0xff76ff],
+    7: ['{} is probably gay',0xff4eff],
+    8: ['{} is gay',0xff3eff],
+    9: ['{} is definitely gay',0xff21ff],
+    10: ['{} is fabulous~',0xff00ff]}.get(score)
+    embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
+    embed.add_field(name = f'Score: {score}', value = f'Do you want to know how gay someone is? Do {p}gaydar [@user].')
+    await ctx.send(embed=embed)
+
 
 tokens = r('token.txt').split('\n')
 interpret = Translator()
