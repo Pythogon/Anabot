@@ -65,35 +65,48 @@ async def rockpaperscissors(ctx, rps):
     'p': 2,
     's': 3}.get(rps,4)
     if player == 4:
-        await ctx.send(f'\U0001F6AB Please use4 {p}rps `<r/p/s>` to play.')
+        embed=discord.Embed(title="Error", color=0xff0000)
+        embed.add_field(name=f'Please use {p}rockpaper scissors [rps] to play.', value='Try rerunning the command.', inline=True)
+        await ctx.send(embed=embed)
         return
     me = rand(1,3)
-    await ctx.send('I pick ' + {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me))
-    asyncio.sleep(3)
+    msg = {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me)
     if me == player:
-        await ctx.send("\U0001F610 It's a tie.")
+        win_state = "It's a tie."
+        comment = "Let's try again."
+        colour = 0xffff00
     elif player == 1 and me == 3 or player == 2 and me == 1 or player == 3 and me == 2:
-        await ctx.send('\U0001F622 You win...')
+        win_state = 'You win...'
+        comment = 'I want a rematch.'
+        colour = 0x00ff40
     else:
-        await ctx.send('\U0000263A I win!')
+        win_state = 'I win!'
+        comment = 'Better luck next time!'
+        colour = 0xff0000
+    embed=discord.Embed(title=win_state, color=colour)
+    embed.add_field(name=f'I picked {msg}', value=comment, inline=True)
+    await ctx.send(embed=embed)
+
 
 @bot.command(aliases = ['test'])
 async def ping(ctx):
     """
     Test if the bot is up
     """
-    await ctx.send('Pong!')
+    embed=discord.Embed(title="Pong!", color=0x00ff40)
+    embed.add_field(name="I'm here!", value=f'Do {p}help to learn about what I can do.', inline=True)
+    await ctx.send(embed=embed)
 
-@bot.command(aliases = ['number'])
-async def dice(ctx,*sides: int):
+@bot.command(name = 'dice', aliases = ['number','random','randint'])
+async def dice_(ctx,*sides: int):
     """
     Roll a dice with x amount of sides (default 6)
     """
-
-    await ctx.send('Rolling...')
+    if sides == (): sides = 6
     dice = int(rand(1,sides))
-    asyncio.sleep(5)
-    await ctx.send(f'{dice}!')
+    embed=discord.Embed(title="Rolling...", color=0xff80ff)
+    embed.add_field(name=f'The dice rolled {dice}.', value='Do {}dice {} to roll again!'.format(p,str(sides)), inline=True)
+    await ctx.send(embed=embed)
 
 @bot.command(aliases = ['cf','coin'])
 async def coinflip(ctx):
@@ -101,7 +114,9 @@ async def coinflip(ctx):
     Flip a coin
     """
     coin = {1: 'heads', 2: 'tails'}.get(rand(1,2))
-    await ctx.send(f"<:coins:567649563968667648> It's {coin}.")
+    embed=discord.Embed(title='Flipping...', color=0x414fd3)
+    embed.add_field(name=f'The coin landed on {coin}.',value=f'Do {p}coinflip to flip another coin!')
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def translate(ctx, to, *text):
@@ -110,9 +125,13 @@ async def translate(ctx, to, *text):
     """
     text = ' '.join(text)
     try:
-        await ctx.send(f'That would be `{interpret.translate(text=text, dest=to).text}`')
+        embed=discord.Embed(title=f'Translating to {to}...', color=0x3bb496)
+        embed.add_field(name='I think that would be:',value=interpret.translate(text=text, dest=to).text)
+        await ctx.send(embed=embed)
     except:
-        await ctx.send(f"\U0001F6AB Sorry but {to} isn't a valid language code. Please try again.")
+        embed=discord.Embed(title='Error', color=0xff0000)
+        embed.add_field(name=f"I can't translate into {to}, sorry!", value="It doesn't look like a valid language code. Please try again.")
+        await ctx.send(embed=embed)
 
 @bot.command(name='colour', aliases = ['color'])
 async def colour_(ctx, *colour):
@@ -121,24 +140,34 @@ async def colour_(ctx, *colour):
     """
     try:
         if colour == ():
-            await ctx.send('No arguments provided. Generating random colour.')
-            raise
+            reason = 0
+            raise ValueError
         colour = ''.join(list(colour))
         try:
             int(colour,16)
         except:
-            colour = 'Err2'
+            reason = 1
+            raise ValueError
         if len(colour) is not 6:
-            await ctx.send(f"\U0001F6AB Sorry, but your argument doesn't match a 6 digit hex code, generating a random one. If you would like to visualise a colour then do {p}colour <6 letter hex code>.")
-            raise
-    except:
+            reason = 1
+            raise ValueError
+        embed = discord.Embed(title="Here's the colour you asked for!", color=0xffffff)
+        embed.add_field(name=f"Enjoy the wonderful shade of #{colour}.", value=f"If you'd like a random colour do {p}colour without an argument.")
+    except ValueError:
         colour = rand(1,16777215)
-        colour = hex(colour)[2:]
+        colour = hex(colour)
+        if reason == 0:
+            name = 'No arguments provided.'
+        else:
+            name = 'Invalid hex code provided.'
+        embed = discord.Embed(title=name, color=0xffffff)
+        colour = colour[2:]
+        embed.add_field(name=f"Enjoy the wonderful shade of #{colour}.", value=f"If you'd like a specific colour do {p}colour [6 letter hex]")
     object = svg2rlg(f'http://www.thecolorapi.com/id?format=svg&hex={colour}')
     renderPM.drawToFile(object, 'colour.png', fmt='PNG')
+    await ctx.send(embed=embed)
     await ctx.send(file=discord.File('colour.png'))
     os.remove('colour.png')
-    await ctx.send(f'Enjoy this lovely shade of #{str(colour)}!')
 
 @bot.command(name='order', aliases = ['food','foodme'])
 async def order_(ctx, *order):
@@ -147,11 +176,17 @@ async def order_(ctx, *order):
     """
     kitchen = bot.get_channel(567702425717178391)
     if order == ():
-        await ctx.send(f"You can't order nothing. Do {p}order <your order>.")
+        embed=discord.Embed(title='Error',color=0xff0000)
+        embed.add_field(name="You can't order nothing.", value=f'Do {p}order [your order].')
+        await ctx.send(embed)
         return
     order = ' '.join(list(order))
-    await ctx.send('Order processed! Please wait with us while we deliver it to you.')
-    await kitchen.send(f'{ctx.author.name} has ordered {order} in {ctx.channel.name}.')
+    embed = discord.Embed(title='Order processed!',color=0x00ff40)
+    embed.add_field(name="We'll get that delivered ASAP.",value="Please keep in mind it may take longer if we aren't available.")
+    await ctx.send(embed=embed)
+    staff_message=discord.Embed(title='New order!',color=0xffffff)
+    staff_message.add_field(name=f'{ctx.author.name} ordered {order} in #{ctx.channel.name}.',value='Get to work~')
+    await kitchen.send(embed=staff_message)
 
 @bot.command()
 async def avatar(ctx, user: discord.User):
@@ -166,8 +201,9 @@ async def invite(ctx):
     """
     Invite users to the server!
     """
-    invite_link = 'https://discord.gg/Vfyc358'
-    await ctx.send('The bot is private, but you can still invite people to the server!\nOur invite link is {}, feel free to invite anyone!'.format(invite_link))
+    embed=discord.Embed(title="Invite people!", url="https://discord.gg/Vfyc358", color=0x00ffff)
+    embed.add_field(name='Invite people to join Be today.', value="Sadly, the bot's private right now so there's no bot invite link.", inline=True)
+    await ctx.send(embed=embed)
 
 @bot.command(name = 'dictionary', aliases=['dict','define'])
 async def pydict(ctx, word):
@@ -183,12 +219,13 @@ async def pydict(ctx, word):
     for x in range(len(list(orange))):
             pear = list(orange[x])
             carrot = str(pear[0])
-            grape += f'__**{carrot}**__\n\n'
+            embed = discord.Embed(title=carrot,colour=0xffffff,inline=True)
+            peach = ''
             for z in range(len(pear[1])):
                 berry = str(pear[1][z])
-                grape += f'{z+1}: {berry}\n'
-            grape += '\n'
-    await ctx.send(f'{grape}Source: WordNet')
+                embed.add_field(name=f'{z+1}',value = berry)
+            embed.set_footer(text='Source: WordNet')
+            await ctx.send(embed=embed)
 
 @bot.command(aliases=['copy','repeat'])
 async def echo(ctx, *tosay):
@@ -196,10 +233,9 @@ async def echo(ctx, *tosay):
     Get the bot to say anything you want
     """
     tosay = ' '.join(tosay)
-    tosay = tosay.replace('@everyone','`@everyone`')
-    tosay = tosay.replace('@here','`@here`')
-    await ctx.send('{}\n*Echoed from <@{}>.*'.format(tosay, ctx.author.id))
-
+    embed = discord.Embed(title=tosay,color=0xffef73)
+    embed.add_field(name=f'Echoed from {ctx.author.name}',value=f'Do you want me to say something? If so do {p}echo [text to say].')
+    await ctx.send(embed=embed)
 
 tokens = r('token.txt').split('\n')
 interpret = Translator()
