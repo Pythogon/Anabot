@@ -102,8 +102,11 @@ async def dice_(ctx,*sides: int):
     """
     Roll a dice with x amount of sides (default 6)
     """
-    if sides == (): sides = 6
-    dice = int(rand(1,sides))
+    if sides == ():
+        sides = 6
+    else:
+        sides = sides[0]
+    dice = rand(1,sides)
     embed=discord.Embed(title="Rolling...", color=0xff80ff)
     embed.add_field(name=f'The dice rolled {dice}.', value='Do {}dice {} to roll again!'.format(p,str(sides)), inline=True)
     await ctx.send(embed=embed)
