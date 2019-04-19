@@ -31,6 +31,13 @@ class ana(commands.Bot): # Let's define our least favourite bot
             embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.") # Message
             embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
             return await ctx.send(embed = embed) # Send
+        if isinstance(error, commands.CheckFailure):
+                embed = discord.Embed(title='Error',color=0xff0000) # New embed
+                embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.") # Message
+                embed.set_footer(text=f"Read {p}help to see what commands you can run. If you believe this is a mistake contact Ciel as this might be a bug.")
+                return await ctx.send(embed=embed)
+
+
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         if message.author.bot:
@@ -205,10 +212,13 @@ async def avatar(ctx, user: discord.User):
 @bot.command()
 @commands.is_owner()
 async def shutdown(ctx):
-        embed=discord.Embed(title='Shutting down...',color=0xff0000)
-        embed.add_field(name="Goodbye!", value='To restart me go to the console and do python3 ana.py.')
-        await ctx.send(embed=embed)
-        exit()
+    '''
+    You know what this does
+    '''
+    embed=discord.Embed(title='Shutting down...',color=0xff0000)
+    embed.add_field(name="Goodbye!", value='To restart me go to the console and do python3 ana.py.')
+    await ctx.send(embed=embed)
+    exit()
 
 @bot.command()
 async def invite(ctx):
