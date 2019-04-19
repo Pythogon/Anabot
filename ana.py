@@ -184,7 +184,7 @@ async def order_(ctx, *order):
     if order == ():
         embed=discord.Embed(title='Error',color=0xff0000)
         embed.add_field(name="You can't order nothing.", value=f'Do {p}order [your order].')
-        await ctx.send(embed)
+        await ctx.send(embed=embed)
         return
     order = ' '.join(list(order))
     embed = discord.Embed(title='Order processed!',color=0x00ff40)
@@ -201,6 +201,14 @@ async def avatar(ctx, user: discord.User):
     """
     url = user.avatar_url
     await ctx.send(url)
+
+@bot.command()
+@commands.is_owner()
+async def shutdown(ctx):
+        embed=discord.Embed(title='Shutting down...',color=0xff0000)
+        embed.add_field(name="Goodbye!", value='To restart me go to the console and do python3 ana.py.')
+        await ctx.send(embed=embed)
+        os.system("screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs kill")
 
 @bot.command()
 async def invite(ctx):
