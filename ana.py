@@ -5,6 +5,7 @@ from py_translator import Translator
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
+from forex_python.converter import CurrencyRates as CR
 
 def r(fname):
     with open(fname, 'r') as file: # File read function
@@ -13,6 +14,13 @@ def r(fname):
 def getStatus():
     return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
 p = '}'
+
+class Error(Exception):
+    pass
+class NothingOrderedError(Error):
+    pass
+class RNAE(Error): # Rates Not Available Error
+    pass
 
 class ana(commands.Bot): # Let's define our least favourite bot
     async def on_ready(self): # Setup
@@ -41,10 +49,19 @@ class ana(commands.Bot): # Let's define our least favourite bot
             embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
             return await ctx.send(embed = embed) # Send
         if isinstance(error, commands.CheckFailure):
-                embed = discord.Embed(title='Error',color=0xff0000) # New embed
-                embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.") # Message
-                embed.set_footer(text=f"Read {p}help to see what commands you can run. If you believe this is a mistake contact Ciel as this might be a bug.")
-                return await ctx.send(embed=embed)
+            embed = discord.Embed(title='Error',color=0xff0000) # New embed
+            embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.") # Message
+            embed.set_footer(text=f'Read {p}help to see what commands you can run. If you believe this is a mistake contact Ciel as this might be a bug.')
+            return await ctx.send(embed=embed)
+        if isinstance(error, RNAE):
+            embed = discord.Embed(title='Error',color=0xff0000) # New embed
+            embed.add_field(name='Incorrect currency codes',value="Sorry, but the currency codes you entered aren't correct.") # Message
+            return await ctx.send(embed=embed)
+        if isinstance(error, NothingOrderedError):
+            embed=discord.Embed(title='Error',color=0xff0000)
+            embed.add_field(name="Nothing ordered", value='You have to order something.')
+            embed.set_footer(text=f'To order something, do {p}order [your order].')
+            return await ctx.send(embed=embed)
 
 
     async def on_reaction_add(self, reaction, user):
@@ -198,10 +215,7 @@ async def order_(ctx, *order):
     """
     kitchen = bot.get_channel(567702425717178391)
     if order == ():
-        embed=discord.Embed(title='Error',color=0xff0000)
-        embed.add_field(name="You can't order nothing.", value=f'Do {p}order [your order].')
-        await ctx.send(embed=embed)
-        return
+        raise NothingOrderedError
     order = ' '.join(list(order))
     embed = discord.Embed(title='Order processed!',color=0x00ff40)
     embed.add_field(name="We'll get that delivered ASAP.",value="Please keep in mind it may take longer if we aren't available.")
@@ -280,7 +294,7 @@ async def gaydar(ctx, user: discord.User):
         await ctx.send('ERR')
     try:
         score = int(scores[str(user.id)])
-        embed = discord.Embed(title=f"Someone's already asked about {user.name}'s number. What was it again?", color = 0xbdbdbd)
+        embed = discord.Embed(title=f"Someone's already asked about {user.name}. How gay are they again?", color = 0xbdbdbd)
         embed.add_field(name = 'Fetching...', value = "Please wait, this won't take long.")
     except:
         embed = discord.Embed(title=f"Nobody's asked me about {user.name} yet. Let's have a look.", color = 0xbdbdbd)
@@ -307,8 +321,21 @@ async def gaydar(ctx, user: discord.User):
     await asyncio.sleep(2)
     await msg.edit(embed=embed)
 
-
+@bot.command(name = 'currency', aliases=['forex','convert'])
+async def currency_(ctx, amount: int, currencyfrom, currencyto):
+    if len(currencyfrom) is not 3 or len(currencyto) is not 3:
+        raise RNAE
+    try:
+        end = currency.convert(currencyfrom, currencyto, amount)
+        rate = currency.get_rate(currencyfrom, currencyto)
+    except:
+        raise RNAE
+    embed = discord.Embed(title='Converting {} to {}...'.format(currencyfrom, currencyto),color=0xad2d5f)
+    embed.add_field(name='{} {} is {:.2f} {}'.format(amount,currencyfrom,end,currencyto),value='Rate: 1 {} to {:.2f} {}'.format(currencyfrom,rate,currencyto))
+    embed.set_footer(text='Source: Forex')
+    await ctx.send(embed=embed)
 tokens = r('token.txt').split('\n')
 interpret = Translator()
 dictionary = PyDictionary()
+currency = CR()
 bot.run(tokens[0])
