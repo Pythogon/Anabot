@@ -1,19 +1,27 @@
-import asyncio,os,discord # Importing
+import asyncio,os,discord,json # Importing
 from discord.ext import commands
 from random import randint as rand
 from py_translator import Translator
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
+
 def r(fname):
     with open(fname, 'r') as file: # File read function
         return file.read()
-p = '|'
-status = {1: 'with Ciel',2: 'all alone',3: 'with you',4: 'Half Life 3', 5: 'Minceraft'}.get(rand(1,5)) # Random status
+
+def getStatus():
+    return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
+p = '}'
 
 class ana(commands.Bot): # Let's define our least favourite bot
     async def on_ready(self): # Setup
         print('Logged on!')
+        while bot.is_ready():
+            await asyncio.sleep(30)
+            activity = discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching)
+            await bot.change_presence(activity = activity)
+
     async def on_message(self,message): # Processisng custom features
         if message.content.startswith(f'<@{self.user.id}>'):
             await message.add_reaction('❤') # Heart on @Anabot
@@ -21,9 +29,10 @@ class ana(commands.Bot): # Let's define our least favourite bot
         if message.author.bot: # Stopping bot chaining
             return
         try:
-            print(f'{message.author.name} ({message.author.id}) | {message.content}') # Spying on everyone (message recording for moderation)
+            chat = f'{message.author.name} ({message.author.id}) | {message.content}'
         except:
-            print('Err #1') # Used if user uses unicode that the Python parser doesn't like
+            chat = 'Err #1' # Used if user uses unicode that the Python parser doesn't like
+        print(chat)
         return await bot.process_commands(message) # Command running
     async def on_command_error(self, ctx, error): # Error handling
         if isinstance(error, commands.BadArgument): # Catching one singular error type (the most common one)
@@ -52,7 +61,7 @@ class ana(commands.Bot): # Let's define our least favourite bot
             await msg.add_reaction('⭐')
 
 
-bot = ana(activity=discord.Game(name=f'{status} | {p}help'), command_prefix=p)
+bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
 
 @bot.command(aliases = ['cc'])
 @commands.has_permissions(manage_messages=True)
@@ -264,7 +273,24 @@ async def gaydar(ctx, user: discord.User):
     """
     Tells you how gay someone is according to Anabot's revolutionary random number generator
     """
-    score = {156019409658314752: 10}.get(user.id, rand(1,10))
+    try:
+        with open('scores.txt', 'r') as json_file:
+            scores = json.load(json_file)
+    except:
+        await ctx.send('ERR')
+    try:
+        score = int(scores[str(user.id)])
+        embed = discord.Embed(title=f"Someone's already asked about {user.name}'s number. What was it again?", color = 0xbdbdbd)
+        embed.add_field(name = 'Fetching...', value = "Please wait, this won't take long.")
+    except:
+        embed = discord.Embed(title=f"Nobody's asked me about {user.name} yet. Let's have a look.", color = 0xbdbdbd)
+        embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
+        score = rand(1,10)
+        scores[str(user.id)] = str(score)
+        with open('scores.txt', 'w') as outfile:
+            json.dump(scores, outfile)
+
+    msg = await ctx.send(embed=embed)
     varset = {1: ['{} is as straight as an arrow',0xffffff],
     2: ['{} is straight',0xffe9ff],
     3: ['{} is straight... probably',0xffcbff],
@@ -274,10 +300,12 @@ async def gaydar(ctx, user: discord.User):
     7: ['{} is probably gay',0xff4eff],
     8: ['{} is gay',0xff3eff],
     9: ['{} is definitely gay',0xff21ff],
-    10: ['{} is fabulous~',0xff00ff]}.get(score)
+    10: ['{} is fabulous~',0xff00ff],
+    -9223372036854775808: ['{} causes an integer overflow error',0xff0000]}.get(score)
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Score: {score}', value = f'Do you want to know how gay someone is? Do {p}gaydar [@user].')
-    await ctx.send(embed=embed)
+    await asyncio.sleep(2)
+    await msg.edit(embed=embed)
 
 
 tokens = r('token.txt').split('\n')
