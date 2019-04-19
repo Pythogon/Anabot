@@ -208,7 +208,7 @@ async def shutdown(ctx):
         embed=discord.Embed(title='Shutting down...',color=0xff0000)
         embed.add_field(name="Goodbye!", value='To restart me go to the console and do python3 ana.py.')
         await ctx.send(embed=embed)
-        os.system("screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs kill")
+        exit()
 
 @bot.command()
 async def invite(ctx):
