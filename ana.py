@@ -29,7 +29,7 @@ class ana(commands.Bot):
         if isinstance(error, commands.BadArgument):
             embed = discord.Embed(title='Error',color=0xff0000)
             embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.")
-            embed.set_footer(text='Please try again.')
+            embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
             return await ctx.send(embed = embed)
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
