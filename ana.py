@@ -58,17 +58,33 @@ class ana(commands.Bot): # Let's define our least favourite bot
             await bot.change_presence(activity = activity)
 
     async def on_message(self,message): # Processisng custom features
+        if message.author.bot: # Stopping bot chaining
+            return
+        if rand(1,50) == 2:
+            try:
+                fpath = f'local_Store/Eco/{message.author.id}'
+                data = jsonread(fpath)
+            except:
+                embed = discord.Embed(title = f"You just won free Hoops but you don't have a bank account with us, so I can't give them you. To make sure this doesn't happen to you again do {p}daily.", color = 0xff0000)
+                return await message.channel.send(embed=embed)
+            amount = rand(1,10) * 100
+            bal = int(data['bal'])
+            e = discord.Embed(title = 'Winner!',color = 0x00ff00)
+            e.add_field(name = f'You just won {amount} free Hoops! Congratulations.', value = 'New balance: ◯{}.'.format(bal))
+            await message.channel.send(embed=e)
+            data['bal'] = str(bal + amount)
+            jsonwrite(fpath, data)
+
         alter = message.content.replace(f'<@{self.user.id}>', '')
         if alter is not message.content:
             await message.add_reaction('❤') # Anabot hearter mark 2
-            return
-        if message.author.bot: # Stopping bot chaining
             return
         try:
             chat = f'{message.author.name} ({message.author.id}) | {message.content}'
         except:
             chat = 'Err #1' # Used if user uses unicode that the Python parser doesn't like
         print(chat)
+
         return await bot.process_commands(message) # Command running
     async def on_command_error(self, ctx, error): # Error handling
         embed = discord.Embed(title='Error',color=0xff0000)
