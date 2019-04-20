@@ -300,18 +300,18 @@ async def coinflip(ctx):
 ##############################
 
 @bot.command()
-async def translate(ctx, to, *text):
+async def translate(ctx, to, source, *text):
     """
     Translator
     """
     text = ' '.join(text)
     try:
-        embed=discord.Embed(title=f'Translating to {to}...', color=0x3bb496)
-        embed.add_field(name='I think that would be:',value=interpret.translate(text=text, dest=to).text)
+        embed=discord.Embed(title=f'Translating to {to} from {source}...', color=0x3bb496)
+        embed.add_field(name='I think that would be:',value=interpret.translate(text, to, source).text)
         await ctx.send(embed=embed)
     except:
         embed=discord.Embed(title='Error', color=0xff0000)
-        embed.add_field(name=f"I can't translate into {to}, sorry!", value="It doesn't look like a valid language code. Please try again.")
+        embed.add_field(name=f"One or more of your language codes are incorrect, sorry!", value="Please try again.")
         await ctx.send(embed=embed)
 
 @bot.command(name='colour', aliases = ['color'])
