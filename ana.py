@@ -380,7 +380,8 @@ def getGay(l, user, prefix):
     return embed
 
 def getRate(l, user, prefix):
-    varset = {1: ["I really don't want to talk about {}.",0x5fa8ff,'★☆☆☆☆'],
+    varset = {0: ["I wouldn't touch {} with a 10 foot pole.", 0x46ff00,'☆☆☆☆☆']
+    1: ["I really don't want to talk about {}.",0x5fa8ff,'★☆☆☆☆'],
     2: ["Sorry, {}... but I'll pass.",0xfffb00,'★★☆☆☆'],
     3: ["{} is okay, that's all I can really say about them.", 0xffc100,'★★★☆☆'],
     4: ["I think {} is great.", 0xff5900,'★★★★☆'],
