@@ -51,6 +51,7 @@ class NAE3(Error): # No Account Error Third Person
 class ana(commands.Bot): # Let's define our least favourite bot
     async def on_ready(self): # Setup
         print('Logged on!')
+
         while bot.is_ready():
             await asyncio.sleep(30)
             activity = discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching)
@@ -113,8 +114,52 @@ class ana(commands.Bot): # Let's define our least favourite bot
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
 
 ##############################
-#          Commands          #
+#             Help           #
 ##############################
+bot.remove_command('help')
+@bot.command(name = 'help', aliases = ['info'])
+async def help_command(ctx):
+    text_ = f'{p}help || Anabot v2.1'
+    title_ = discord.Embed(title = 'Help', color = 0x00ff00)
+    title_.add_field(name = 'Welcome to Anabot!', value = "I'm here to enhance your experience on the server.", inline = True)
+    title_.set_footer(text = text_)
+
+    general = discord.Embed(title = 'General Commands', color = 0x00ff00)
+    general.add_field(name = f'{p}help', value = 'Shows these messages.', inline = True)
+    general.add_field(name = f'{p}ping', value = 'Test bot connection.', inline = True)
+    general.add_field(name = f'{p}invite', value = 'Invite members to the server.', inline = True)
+    general.add_field(name = f'{p}dice <sides>', value = 'Rolls a dice with given number of sides (default is 6).', inline = True)
+    general.add_field(name = f'{p}coinflip', value = 'Flip a coin!', inline = True)
+    general.add_field(name = f'{p}colour OR {p}color', value = 'Generate a random colour.', inline = True)
+    general.set_footer(text = text_)
+
+    utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00)
+    utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
+    utility.add_field(name = f'({p}colour OR {p}color) [6 letter hex code]', value = 'Visualise any colour if you know its hex code!', inline = True)
+    utility.add_field(name = f'{p}avatar <@user>', value = "Fetch  a user's avatar.", inline = True)
+    utility.add_field(name = f'{p}dictionary <word>', value = 'Define a word (source: WordNet).', inline = True)
+    utility.add_field(name = f'{p}currency <amount> <from> <to>', value = 'Convert amounts between currencies (source: Forex).', inline = True)
+    utility.set_footer(text = text_)
+
+    fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00)
+    fun.add_field(name = f'{p}rockpaperscissors <r, p or s>', value = 'Play a friendly game of rock paper scissors with me!', inline = True)
+    fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
+    fun.add_field(name = f'{p}echo <text>', value = 'Get me to repeat anything you want in an embed.', inline = True)
+    fun.add_field(name = f'{p}gaydar <@user>', value = 'Tells you how gay someone is.', inline = True)
+    fun.add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
+    fun.set_footer(text = text_)
+
+    eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00)
+    eco.add_field(name = f'{p}daily', value = 'Get your daily Hoops or register your user ID into the bank.', inline = True)
+    eco.add_field(name = f'{p}balance', value = 'Check your balance. (R)', inline = True)
+    eco.add_field(name = f'{p}dicebet', value = 'Bet on the value of a dice and get paid depending on how close you got! (R)', inline = True)
+    eco.set_footer(text = text_)
+
+    await ctx.send(embed=title_)
+    await ctx.send(embed=general)
+    await ctx.send(embed=utility)
+    await ctx.send(embed=fun)
+    await ctx.send(embed=eco)
 
 ##############################
 #           Admin            #
