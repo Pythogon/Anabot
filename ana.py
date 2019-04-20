@@ -1,3 +1,7 @@
+##############################
+#             Ana            #
+##############################
+
 import asyncio,os,discord,json # Importing
 from discord.ext import commands
 from random import randint as rand
@@ -6,15 +10,28 @@ from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
 from forex_python.converter import CurrencyRates as CR
+from datetime import datetime
 
 def r(fname):
     with open(f'local_Store/{fname}', 'r') as file: # File read function
         return file.read()
 
+def jsonread(fpath):
+    with open(fpath, 'r') as json_file:
+        return json.load(json_file)
+
+def jsonwrite(fpath, data):
+    with open(fpath, 'w') as outfile:
+        json.dump(data,outfile)
+
 def getStatus():
     return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
 
 p = '}'
+
+##############################
+#           Errors           #
+##############################
 
 class Error(Exception):
     pass
@@ -22,6 +39,14 @@ class NothingOrderedError(Error):
     pass
 class RNAE(Error): # Rates Not Available Error
     pass
+class NAE1(Error): # No Account Error First Person
+    pass
+class NAE3(Error): # No Account Error Third Person
+    pass
+
+##############################
+#            Class           #
+##############################
 
 class ana(commands.Bot): # Let's define our least favourite bot
     async def on_ready(self): # Setup
@@ -32,8 +57,9 @@ class ana(commands.Bot): # Let's define our least favourite bot
             await bot.change_presence(activity = activity)
 
     async def on_message(self,message): # Processisng custom features
-        if message.content.startswith(f'<@{self.user.id}>'):
-            await message.add_reaction('❤') # Heart on @Anabot
+        alter = message.content.replace(f'<@{self.user.id}>', '')
+        if alter is not message.content:
+            await message.add_reaction('❤') # Anabot hearter mark 2
             return
         if message.author.bot: # Stopping bot chaining
             return
@@ -44,41 +70,55 @@ class ana(commands.Bot): # Let's define our least favourite bot
         print(chat)
         return await bot.process_commands(message) # Command running
     async def on_command_error(self, ctx, error): # Error handling
+        embed = discord.Embed(title='Error',color=0xff0000)
         if isinstance(error, commands.BadArgument): # Catching one singular error type (the most common one)
-            embed = discord.Embed(title='Error',color=0xff0000) # New embed
             embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.") # Message
             embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
             return await ctx.send(embed = embed) # Send
-        if isinstance(error, commands.CheckFailure):
-            embed = discord.Embed(title='Error',color=0xff0000) # New embed
-            embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.") # Message
+        if isinstance(error, commands.CheckFailure): # These are pretty self explanatory
+            embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.")
             embed.set_footer(text=f'Read {p}help to see what commands you can run. If you believe this is a mistake contact Ciel as this might be a bug.')
             return await ctx.send(embed=embed)
         if isinstance(error, RNAE):
-            embed = discord.Embed(title='Error',color=0xff0000) # New embed
-            embed.add_field(name='Incorrect currency codes',value="Sorry, but the currency codes you entered aren't correct.") # Message
+            embed.add_field(name='Incorrect currency codes',value="Sorry, but the currency codes you entered aren't correct.")
             return await ctx.send(embed=embed)
         if isinstance(error, NothingOrderedError):
-            embed=discord.Embed(title='Error',color=0xff0000)
             embed.add_field(name="Nothing ordered", value='You have to order something.')
             embed.set_footer(text=f'To order something, do {p}order [your order].')
             return await ctx.send(embed=embed)
+        if isinstance(error, NAE1):
+            embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
+            embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
+            return await ctx.send(embed=embed)
+        if isinstance(error, NAE3):
+            embed.add_field(name="No account", value=f"The person you're trying to interract with doesn't have an account.")
+            embed.set_footer(text=f'Tell them to run {p}daily.')
+            return await ctx.send(embed=embed)
 
 
-    async def on_reaction_add(self, reaction, user):
-        message = reaction.message
+
+    async def on_reaction_add(self, reaction, user): # Listening for reactions
+        message = reaction.message # Getting Message objext
         if message.author.bot:
-            return
+            return # Bots can't have anything special
         if message.channel.id == 567685702205046785:
-            await message.add_reaction(reaction.emoji)
+            await message.add_reaction(reaction.emoji) # Polls
             return
-        starboard = bot.get_channel(568450985098215425)
+        starboard = bot.get_channel(568450985098215425) # This doesn't work right now
         if len(message.reactions) == 3:
             msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
             await msg.add_reaction('⭐')
 
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
+
+##############################
+#          Commands          #
+##############################
+
+##############################
+#           Admin            #
+##############################
 
 @bot.command(aliases = ['cc'])
 @commands.has_permissions(manage_messages=True)
@@ -92,37 +132,53 @@ async def clearchat(ctx):
     tosend = f'{tosend}\nCleared chat.'
     await ctx.send(tosend)
 
-@bot.command(aliases = ['rps'])
-async def rockpaperscissors(ctx, rps):
+##############################
+#           Owner            #
+##############################
+
+@bot.command()
+@commands.is_owner()
+async def shutdown(ctx):
+    '''
+    Shutdown instance of bot
+    '''
+    embed=discord.Embed(title='Shutting down...',color=0xff0000)
+    embed.add_field(name="Goodbye!", value='To restart me go to the console and do pm2 restart ana.')
+    await ctx.send(embed=embed)
+    exit()
+
+@bot.command()
+@commands.is_owner()
+async def override(ctx, user: discord.User, cmd, level: int):
     """
-    Rock paper scissors
+    Overrides a user's gaydar level
     """
-    player = {'r': 1,
-    'p': 2,
-    's': 3}.get(rps,4)
-    if player == 4:
-        embed=discord.Embed(title="Error", color=0xff0000)
-        embed.add_field(name=f'Please use {p}rockpaper scissors [rps] to play.', value='Try rerunning the command.', inline=True)
-        await ctx.send(embed=embed)
-        return
-    me = rand(1,3)
-    msg = {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me)
-    if me == player:
-        win_state = "It's a tie."
-        comment = "Let's try again."
-        colour = 0xffff00
-    elif player == 1 and me == 3 or player == 2 and me == 1 or player == 3 and me == 2:
-        win_state = 'You win...'
-        comment = 'I want a rematch.'
-        colour = 0x00ff40
-    else:
-        win_state = 'I win!'
-        comment = 'Better luck next time!'
-        colour = 0xff0000
-    embed=discord.Embed(title=win_state, color=colour)
-    embed.add_field(name=f'I picked {msg}', value=comment, inline=True)
+    fpath = f'local_Store/{cmd}.txt'
+    scores = jsonread(fpath)
+    scores[str(user.id)] = str(level)
+    json.write(fpath, scores)
+    embed=discord.Embed(title = f'Manual override for {user.name}:', color = 0xff0000)
+    embed.add_field(name = f"Override on '{cmd}' succesful.", value = f"New value: {level}.")
+    embed.set_footer(text = 'Make sure nobody finds out about this~')
     await ctx.send(embed=embed)
 
+@bot.command()
+@commands.is_owner()
+async def manipulate(ctx, user: discord.User, variable, value):
+    fpath = f'local_Store/Eco/{ctx.author.id}'
+    try:
+        data = jsonread(fpath)
+    except:
+        raise NAE3
+    data[variable] = value
+    jsonwrite(fpath,data)
+    embed=discord.Embed(title = f'Manual override for {user.name}:', color = 0xff0000)
+    embed.add_field(name = f"Override on '{variable}' succesful.", value = f"New value: {value}.")
+    await ctx.send(embed=embed)
+
+##############################
+#           General          #
+##############################
 
 @bot.command(aliases = ['test'])
 async def ping(ctx):
@@ -132,6 +188,19 @@ async def ping(ctx):
     embed=discord.Embed(title="Pong!", color=0x00ff40)
     embed.add_field(name="I'm here!", value=f'Do {p}help to learn about what I can do.', inline=True)
     await ctx.send(embed=embed)
+
+@bot.command()
+async def invite(ctx):
+    """
+    Invite users to the server!
+    """
+    embed=discord.Embed(title="Invite people!", url="https://discord.gg/Vfyc358", color=0x00ffff)
+    embed.add_field(name='Invite people to join Be today.', value="Sadly, the bot's private right now so there's no bot invite link.", inline=True)
+    await ctx.send(embed=embed)
+
+##############################
+#           Random           #
+##############################
 
 @bot.command(name = 'dice', aliases = ['number','random','randint'])
 async def dice_(ctx,*sides: int):
@@ -156,6 +225,10 @@ async def coinflip(ctx):
     embed=discord.Embed(title='Flipping...', color=0x414fd3)
     embed.add_field(name=f'The coin landed on {coin}.',value=f'Do {p}coinflip to flip another coin!')
     await ctx.send(embed=embed)
+
+##############################
+#           Utility          #
+##############################
 
 @bot.command()
 async def translate(ctx, to, *text):
@@ -208,22 +281,6 @@ async def colour_(ctx, *colour):
     await ctx.send(file=discord.File('colour.png'))
     os.remove('colour.png')
 
-@bot.command(name='order', aliases = ['food','foodme'])
-async def order_(ctx, *order):
-    """
-    Order food from FoodNet
-    """
-    kitchen = bot.get_channel(567702425717178391)
-    if order == ():
-        raise NothingOrderedError
-    order = ' '.join(list(order))
-    embed = discord.Embed(title='Order processed!',color=0x00ff40)
-    embed.add_field(name="We'll get that delivered ASAP.",value="Please keep in mind it may take longer if we aren't available.")
-    await ctx.send(embed=embed)
-    staff_message=discord.Embed(title='New order!',color=0xffffff)
-    staff_message.add_field(name=f'{ctx.author.name} ordered {order} in #{ctx.channel.name}.',value='Get to work~')
-    await kitchen.send(embed=staff_message)
-
 @bot.command()
 async def avatar(ctx, user: discord.User):
     """
@@ -231,26 +288,6 @@ async def avatar(ctx, user: discord.User):
     """
     url = user.avatar_url
     await ctx.send(url)
-
-@bot.command()
-@commands.is_owner()
-async def shutdown(ctx):
-    '''
-    You know what this does
-    '''
-    embed=discord.Embed(title='Shutting down...',color=0xff0000)
-    embed.add_field(name="Goodbye!", value='To restart me go to the console and do python3 ana.py.')
-    await ctx.send(embed=embed)
-    exit()
-
-@bot.command()
-async def invite(ctx):
-    """
-    Invite users to the server!
-    """
-    embed=discord.Embed(title="Invite people!", url="https://discord.gg/Vfyc358", color=0x00ffff)
-    embed.add_field(name='Invite people to join Be today.', value="Sadly, the bot's private right now so there's no bot invite link.", inline=True)
-    await ctx.send(embed=embed)
 
 @bot.command(name = 'dictionary', aliases=['dict','define'])
 async def pydict(ctx, word):
@@ -272,6 +309,72 @@ async def pydict(ctx, word):
             embed.set_footer(text='Source: WordNet')
             await ctx.send(embed=embed)
 
+@bot.command(name = 'currency', aliases=['forex','convert','con'])
+async def currency_(ctx, amount: int, currencyfrom, currencyto):
+    if len(currencyfrom) is not 3 or len(currencyto) is not 3:
+        raise RNAE
+    try:
+        end = currency.convert(currencyfrom, currencyto, amount)
+        rate = currency.get_rate(currencyfrom, currencyto)
+    except:
+        raise RNAE
+    embed = discord.Embed(title='Converting {} to {}...'.format(currencyfrom, currencyto),color=0xad2d5f)
+    embed.add_field(name='{} {} is {:.2f} {}'.format(amount,currencyfrom,end,currencyto),value='Rate: 1 {} to {:.2f} {}'.format(currencyfrom,rate,currencyto))
+    embed.set_footer(text='Source: Forex')
+    await ctx.send(embed=embed)
+
+##############################
+#             Fun            #
+##############################
+
+@bot.command(aliases = ['rps'])
+async def rockpaperscissors(ctx, rps):
+    """
+    Rock paper scissors
+    """
+    player = {'r': 1,
+    'p': 2,
+    's': 3}.get(rps,4)
+    if player == 4:
+        embed=discord.Embed(title="Error", color=0xff0000)
+        embed.add_field(name=f'Please use {p}rockpaper scissors [rps] to play.', value='Try rerunning the command.', inline=True)
+        await ctx.send(embed=embed)
+        return
+    me = rand(1,3)
+    msg = {1: 'rock.',2: 'paper.',3: 'scissors.'}.get(me)
+    if me == player:
+        win_state = "It's a tie."
+        comment = "Let's try again."
+        colour = 0xffff00
+    elif player == 1 and me == 3 or player == 2 and me == 1 or player == 3 and me == 2:
+        win_state = 'You win...'
+        comment = 'I want a rematch.'
+        colour = 0x00ff40
+    else:
+        win_state = 'I win!'
+        comment = 'Better luck next time!'
+        colour = 0xff0000
+    embed=discord.Embed(title=win_state, color=colour)
+    embed.add_field(name=f'I picked {msg}', value=comment, inline=True)
+    await ctx.send(embed=embed)
+
+
+@bot.command(name='order', aliases = ['food','foodme'])
+async def order_(ctx, *order):
+    """
+    Order food from FoodNet
+    """
+    kitchen = bot.get_channel(567702425717178391)
+    if order == ():
+        raise NothingOrderedError
+    order = ' '.join(list(order))
+    embed = discord.Embed(title='Order processed!',color=0x00ff40)
+    embed.add_field(name="We'll get that delivered ASAP.",value="Please keep in mind it may take longer if we aren't available.")
+    await ctx.send(embed=embed)
+    staff_message=discord.Embed(title='New order!',color=0xffffff)
+    staff_message.add_field(name=f'{ctx.author.name} ordered {order} in #{ctx.channel.name}.',value='Get to work~')
+    await kitchen.send(embed=staff_message)
+
 @bot.command(aliases=['copy','repeat'])
 async def echo(ctx, *tosay):
     """
@@ -287,9 +390,9 @@ async def gaydar(ctx, user: discord.User):
     """
     Tells you how gay someone is according to Anabot's revolutionary random number generator
     """
+    fpath = 'local_Store/gay.txt'
     try:
-        with open('local_Store/gay.txt', 'r') as json_file:
-            scores = json.load(json_file)
+        scores = jsonread(fpath)
     except:
         await ctx.send('ERR')
     try:
@@ -301,51 +404,19 @@ async def gaydar(ctx, user: discord.User):
         embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
         score = rand(1,10)
         scores[str(user.id)] = str(score)
-        with open('local_Store/gay.txt', 'w') as outfile:
-            json.dump(scores, outfile)
+        jsonwrite(fpath, scores)
     msg = await ctx.send(embed=embed)
     await asyncio.sleep(2)
     await msg.edit(embed=getGay(score, user, p))
-
-@bot.command()
-@commands.is_owner()
-async def override(ctx, user: discord.User, cmd, level: int):
-    """
-    Overrides a user's gaydar level
-    """
-    with open(f'local_Store/{cmd}.txt','r') as json_file:
-        scores = json.load(json_file)
-    scores[str(user.id)] = str(level)
-    with open(f'local_Store/{cmd}.txt','w') as outfile:
-        json.dump(scores, outfile)
-    embed=discord.Embed(title = f'Manual override for {user.name}.', color = 0xff0000)
-    embed.add_field(name = f"Override on '{cmd}' succesful.", value = f"New value: {level}.")
-    embed.set_footer(text = 'Make sure nobody finds out about this~')
-    await ctx.send(embed=embed)
-
-
-@bot.command(name = 'currency', aliases=['forex','convert','money','con'])
-async def currency_(ctx, amount: int, currencyfrom, currencyto):
-    if len(currencyfrom) is not 3 or len(currencyto) is not 3:
-        raise RNAE
-    try:
-        end = currency.convert(currencyfrom, currencyto, amount)
-        rate = currency.get_rate(currencyfrom, currencyto)
-    except:
-        raise RNAE
-    embed = discord.Embed(title='Converting {} to {}...'.format(currencyfrom, currencyto),color=0xad2d5f)
-    embed.add_field(name='{} {} is {:.2f} {}'.format(amount,currencyfrom,end,currencyto),value='Rate: 1 {} to {:.2f} {}'.format(currencyfrom,rate,currencyto))
-    embed.set_footer(text='Source: Forex')
-    await ctx.send(embed=embed)
 
 @bot.command(aliases=['rateme','howhot','smashorpass'])
 async def rate(ctx, user: discord.User):
     """
     What does Anabot think of you?
     """
+    fpath = 'local_Store/rate.txt'
     try:
-        with open('local_Store/rate.txt', 'r') as json_file:
-            scores = json.load(json_file)
+        scores = jsonread(fpath)
     except:
         await ctx.send('ERR')
     try:
@@ -357,11 +428,59 @@ async def rate(ctx, user: discord.User):
         embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
         score = rand(1,5)
         scores[str(user.id)] = str(score)
-        with open('local_Store/rate.txt', 'w') as outfile:
-            json.dump(scores, outfile)
+        jsonwrite(fpath, scores)
     msg = await ctx.send(embed=embed)
     await asyncio.sleep(2)
     await msg.edit(embed=getRate(score, user, p))
+
+##############################
+#             Eco            #
+##############################
+
+@bot.command()
+async def daily(ctx):
+    fpath = f'local_Store/Eco/{ctx.author.id}'
+    try:
+        data = jsonread(fpath)
+    except:
+        default = {'bal': '0', 'lastdaily': '00000000'}
+        jsonwrite(fpath, default)
+        data = jsonread(fpath)
+        e = discord.Embed(title = 'No bank account found.', color = 0xff0000)
+        e.add_field(name = 'Generating new account file...', value = 'Please wait with me.')
+        await ctx.send(embed=e)
+    bal = int(data['bal'])
+    now = datetime.utcnow()
+    currentdaily = '{}{}{}'.format(now.year,now.month,now.day)
+    if data['lastdaily'] == currentdaily:
+        e = discord.Embed(title = 'Error', color = 0xff0000)
+        e.add_field(name = "You've already claimed your daily today.", value = 'Come back tomorrow!')
+        return await ctx.send(embed=e)
+    bal += 1000
+    data['bal'] = str(bal)
+    data['lastdaily'] = currentdaily
+    jsonwrite(fpath, data)
+    e = discord.Embed(title = 'Success!', color = 0x00ffff)
+    e.add_field(name = 'Okay, your daily has been succesfully added to your account.', value = f'New balance: ◯{bal}.')
+    await ctx.send(embed=e)
+
+@bot.command(aliases = ['bal','cash','money','bank'])
+async def balance(ctx):
+    fpath = f'local_Store/Eco/{ctx.author.id}'
+    try:
+        data = jsonread(fpath)
+    except:
+        raise NAE1
+    bal = data['bal']
+    e = discord.Embed(title = 'Your balance:', color = 0x00ffff)
+    e.add_field(name = f'◯{bal}', value = f'Protip: Make sure to do {p}daily every day for the most rewards.')
+    await ctx.send(embed=e)
+
+
+
+##############################
+#          Functions         #
+##############################
 
 def getGay(l, user, prefix):
     varset = {1: ['{} is as straight as an arrow.',0xffffff],
@@ -384,6 +503,10 @@ def getRate(l, user, prefix):
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Rating: {varset[2]}', value = f'Do you want to know what I think about someone? Do {prefix}rate [@user].')
     return embed
+
+##############################
+#             Run            #
+##############################
 
 tokens = r('token.txt').split('\n')
 interpret = Translator()
