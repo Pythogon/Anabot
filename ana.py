@@ -476,6 +476,44 @@ async def balance(ctx):
     e.add_field(name = f'◯{bal}', value = f'Protip: Make sure to do {p}daily every day for the most rewards.')
     await ctx.send(embed=e)
 
+@bot.command()
+async def dicebet(ctx, choice: int, bet: int):
+    '''
+    Bet on a 10 sided dice roll and get paid depending on how close your guess was
+    '''
+    fpath = f'local_Store/Eco/{ctx.author.id}'
+    if choice > 10 or choice < 1: raise commands.BadArgument
+    if choice % 1 is not 0: raise commands.BadArgument
+    if bet < 100:
+        e = discord.Embed(title = 'Error', color = 0xff0000)
+        e.add_field(name = 'Bet too small', value = "Your bet isn't quite large enough. It has to be at least ◯100.")
+        return await ctx.send(embed=e)
+    try: data = jsonread(fpath)
+    except: raise NAE1
+    bal = int(data['bal'])
+    if bet > bal: raise DebtError
+    bal -= bet
+    roll = rand(1,10)
+    if roll == choice:
+        payback = 2*bet
+        bal += payback
+        bonus = payback - bet
+        pack = ['Jackpot!',0x46ff00]
+    elif roll == choice + 1 or roll == choice - 1:
+        pack = ['Close...',0xffff00]
+        payback = 1.5*bet
+        bal += payback
+        bonus = payback - bet
+    else:
+        pack = ['Too bad...',0xffffff]
+        bonus = 0
+    bal = int(bal)
+    data['bal'] = str(bal)
+    embed = discord.Embed(title=pack[0],color=pack[1])
+    embed.add_field(name = 'You picked {} and the roll was {}.'.format(choice, roll), value = 'Earnings: ◯{}'.format(bonus))
+    embed.set_footer(text = 'New balance: ◯{}.'.format(bal))
+    jsonwrite(fpath, data)
+    await ctx.send(embed=embed)
 
 
 ##############################
