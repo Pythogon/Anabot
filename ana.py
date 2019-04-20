@@ -318,8 +318,9 @@ async def override(ctx, user: discord.User, cmd, level: int):
     scores[str(user.id)] = str(level)
     with open(f'local_Store/{cmd}.txt','w') as outfile:
         json.dump(scores, outfile)
-    embed=discord.Embed(title = f'Manual override for {user.name}', color = 0xff0000)
-    embed.add_field(name = f"Override on '{cmd}' succesful", value = f"New value: {level}")
+    embed=discord.Embed(title = f'Manual override for {user.name}.', color = 0xff0000)
+    embed.add_field(name = f"Override on '{cmd}' succesful.", value = f"New value: {level}.")
+    embed.set_footer(text = 'Make sure nobody finds out about this~')
     await ctx.send(embed=embed)
 
 
@@ -373,7 +374,7 @@ def getGay(l, user, prefix):
     8: ['{} is gay.',0xff3eff],
     9: ['{} is definitely gay.',0xff21ff],
     10: ['{} is fabulous~',0xff00ff],
-    -9223372036854775808: ['{} causes an integer overflow error',0xff0000]}.get(l)
+    -9223372036854775808: ['{} causes an integer overflow error.',0xff0000]}.get(l)
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Score: {l} out of 10', value = f'Do you want to know how gay someone is? Do {prefix}gaydar [@user].')
     return embed
