@@ -103,10 +103,6 @@ class ana(commands.Bot): # Let's define our least favourite bot
             embed.add_field(name="Nothing ordered", value='You have to order something.')
             embed.set_footer(text=f'To order something, do {p}order [your order].')
             return await ctx.send(embed=embed)
-        if isinstance(error, NAE1):
-            embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
-            embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
-            return await ctx.send(embed=embed)
         if isinstance(error, NAE3):
             embed.add_field(name="No account", value=f"The person you're trying to interract with doesn't have an account.")
             embed.set_footer(text=f'Tell them to run {p}daily.')
@@ -555,7 +551,10 @@ async def balance(ctx):
     try:
         data = jsonread(fpath)
     except:
-        raise NAE1
+        embed = discord.Embed(title = 'Error', color = 0xff0000)
+        embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
+        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
+        return await ctx.send(embed=embed)
     bal = data['bal']
     e = discord.Embed(title = 'Your balance:', color = 0x00ffff)
     e.add_field(name = f'◯{bal}', value = f'Protip: Make sure to do {p}daily every day for the most rewards.')
@@ -573,8 +572,13 @@ async def dicebet(ctx, choice: int, bet: int):
         e = discord.Embed(title = 'Error', color = 0xff0000)
         e.add_field(name = 'Bet too small', value = "Your bet isn't quite large enough. It has to be at least ◯100.")
         return await ctx.send(embed=e)
-    try: data = jsonread(fpath)
-    except: raise NAE1
+    try:
+        data = jsonread(fpath)
+    except:
+        embed = discord.Embed(title = 'Error', color = 0xff0000)
+        embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
+        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
+        return await ctx.send(embed=embed)
     bal = int(data['bal'])
     if bet > bal: raise DebtError
     bal -= bet
