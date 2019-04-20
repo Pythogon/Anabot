@@ -495,13 +495,13 @@ async def dicebet(ctx, choice: int, bet: int):
     bal -= bet
     roll = rand(1,10)
     if roll == choice:
-        payback = 2*bet
+        payback = 5*bet
         bal += payback
         bonus = payback - bet
         pack = ['Jackpot!',0x46ff00]
     elif roll == choice + 1 or roll == choice - 1:
         pack = ['Close...',0xffff00]
-        payback = 1.5*bet
+        payback = 2*bet
         bal += payback
         bonus = payback - bet
     else:
