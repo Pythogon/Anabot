@@ -112,14 +112,14 @@ class ana(commands.Bot): # Let's define our least favourite bot
         count = len(bot.guilds)
         log = bot.get_channel(569264606015520778)
         e = discord.Embed(title = 'Guild joined!', color = 0x00ff00)
-        e.add_field(name = f'Joined {guild.name}.', value = f'New guild count: {count}.')
+        e.add_field(name = f'Joined {guild.name} ({guild.id}).', value = f'New guild count: {count}.')
         await log.send(embed=e)
 
     async def on_guild_remove(self, guild):
         count = len(bot.guilds)
         log = bot.get_channel(569264606015520778)
         e = discord.Embed(title = 'Guild left...', color = 0xff0000)
-        e.add_field(name = f'Left {guild.name}.', value = f'New guild count: {count}.')
+        e.add_field(name = f'Left {guild.name} ({guild.id}).', value = f'New guild count: {count}.')
         await log.send(embed=e)
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
@@ -128,7 +128,7 @@ bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord
 #             Help           #
 ##############################
 bot.remove_command('help')
-@bot.command(name = 'help', aliases = ['info'])
+@bot.command(name = 'help')
 async def help_command(ctx):
     text_ = f'{p}help || Anabot v1.0'
     title_ = discord.Embed(title = 'Help', color = 0x00ff00)
@@ -141,12 +141,11 @@ async def help_command(ctx):
     general.add_field(name = f'{p}invite', value = 'Invite the bot to your server!', inline = True)
     general.add_field(name = f'{p}dice <sides>', value = 'Rolls a dice with given number of sides (default is 6).', inline = True)
     general.add_field(name = f'{p}coinflip', value = 'Flip a coin!', inline = True)
-    general.add_field(name = f'{p}colour', value = 'Generate a random colour.', inline = True)
     general.set_footer(text = text_)
 
     utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00)
     utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
-    utility.add_field(name = f'{p}colour <6 letter hex code>', value = 'Visualise any colour if you know its hex code!', inline = True)
+    utility.add_field(name = f'{p}colour [6 letter hex code]', value = 'Visualise any colour or randomly generate one!', inline = True)
     utility.add_field(name = f'{p}avatar <@user>', value = "Fetch  a user's avatar.", inline = True)
     utility.add_field(name = f'{p}dictionary <word>', value = 'Define a word (source: WordNet).', inline = True)
     utility.add_field(name = f'{p}currency <amount> <from> <to>', value = 'Convert amounts between currencies (source: Forex).', inline = True)
@@ -171,6 +170,13 @@ async def help_command(ctx):
     await ctx.send(embed=utility)
     await ctx.send(embed=fun)
     await ctx.send(embed=eco)
+
+@bot.command(name = 'info')
+async def info_(ctx):
+    e = discord.Embed(title = 'About me:', color = 0x00ffff)
+    e.add_field(name = 'Owner', value = 'Ciel (User 156019409658314752)')
+    e.add_field(name = 'Github Repo', value = 'https://github.com/Pythogon/Anabot')
+    await ctx.send(embed=e)
 
 ##############################
 #           Admin            #
@@ -231,6 +237,12 @@ async def manipulate(ctx, user: discord.User, variable, value):
     embed=discord.Embed(title = f'Manual override for {user.name}:', color = 0xff0000)
     embed.add_field(name = f"Override on '{variable}' succesful.", value = f"New value: {value}.")
     await ctx.send(embed=embed)
+
+@bot.command()
+@commands.is_owner()
+async def forceleave(ctx, guildid: int):
+    toleave = bot.get_guild(guildid)
+    await toleave.leave()
 
 ##############################
 #           General          #
