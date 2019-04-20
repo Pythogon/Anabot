@@ -96,8 +96,6 @@ class ana(commands.Bot): # Let's define our least favourite bot
             embed.set_footer(text=f'Tell them to run {p}daily.')
             return await ctx.send(embed=embed)
 
-
-
     async def on_reaction_add(self, reaction, user): # Listening for reactions
         message = reaction.message # Getting Message objext
         if message.author.bot:
@@ -110,6 +108,19 @@ class ana(commands.Bot): # Let's define our least favourite bot
             msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
             await msg.add_reaction('⭐')
 
+    async def on_guild_join(self, guild):
+        count = len(bot.guilds)
+        log = bot.get_channel(569264606015520778)
+        e = discord.Embed(title = 'Guild joined!', color = 0x00ff00)
+        e.add_field(name = f'Joined {guild.name}.', value = f'New guild count: {count}.')
+        await log.send(embed=e)
+
+    async def on_guild_remove(self, guild):
+        count = len(bot.guilds)
+        log = bot.get_channel(569264606015520778)
+        e = discord.Embed(title = 'Guild left...', color = 0xff0000)
+        e.add_field(name = f'Left {guild.name}.', value = f'New guild count: {count}.')
+        await log.send(embed=e)
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
 
@@ -119,7 +130,7 @@ bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord
 bot.remove_command('help')
 @bot.command(name = 'help', aliases = ['info'])
 async def help_command(ctx):
-    text_ = f'{p}help || Anabot v2.1'
+    text_ = f'{p}help || Anabot v1.0'
     title_ = discord.Embed(title = 'Help', color = 0x00ff00)
     title_.add_field(name = 'Welcome to Anabot!', value = "I'm here to enhance your experience on the server.", inline = True)
     title_.set_footer(text = text_)
@@ -127,15 +138,15 @@ async def help_command(ctx):
     general = discord.Embed(title = 'General Commands', color = 0x00ff00)
     general.add_field(name = f'{p}help', value = 'Shows these messages.', inline = True)
     general.add_field(name = f'{p}ping', value = 'Test bot connection.', inline = True)
-    general.add_field(name = f'{p}invite', value = 'Invite members to the server.', inline = True)
+    general.add_field(name = f'{p}invite', value = 'Invite the bot to your server!', inline = True)
     general.add_field(name = f'{p}dice <sides>', value = 'Rolls a dice with given number of sides (default is 6).', inline = True)
     general.add_field(name = f'{p}coinflip', value = 'Flip a coin!', inline = True)
-    general.add_field(name = f'{p}colour OR {p}color', value = 'Generate a random colour.', inline = True)
+    general.add_field(name = f'{p}colour', value = 'Generate a random colour.', inline = True)
     general.set_footer(text = text_)
 
     utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00)
     utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
-    utility.add_field(name = f'({p}colour OR {p}color) [6 letter hex code]', value = 'Visualise any colour if you know its hex code!', inline = True)
+    utility.add_field(name = f'{p}colour <6 letter hex code>', value = 'Visualise any colour if you know its hex code!', inline = True)
     utility.add_field(name = f'{p}avatar <@user>', value = "Fetch  a user's avatar.", inline = True)
     utility.add_field(name = f'{p}dictionary <word>', value = 'Define a word (source: WordNet).', inline = True)
     utility.add_field(name = f'{p}currency <amount> <from> <to>', value = 'Convert amounts between currencies (source: Forex).', inline = True)
@@ -239,9 +250,10 @@ async def invite(ctx):
     """
     Invite users to the server!
     """
-    embed=discord.Embed(title="Invite people!", url="https://discord.gg/Vfyc358", color=0x00ffff)
-    embed.add_field(name='Invite people to join Be today.', value="Sadly, the bot's private right now so there's no bot invite link.", inline=True)
+    embed=discord.Embed(title="Invite the bot to your server!", url="https://discordapp.com/oauth2/authorize?client_id=567418835976847360&scope=bot&permissions=8", color=0x00ffff)
+    e = discord.Embed(title='Join our Discord server for fun times and updates.', url = 'https://discord.gg/Vfyc358/', color = 0x00ffff)
     await ctx.send(embed=embed)
+    await ctx.send(embed=e)
 
 ##############################
 #           Random           #
