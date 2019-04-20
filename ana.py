@@ -8,11 +8,12 @@ from PyDictionary import PyDictionary
 from forex_python.converter import CurrencyRates as CR
 
 def r(fname):
-    with open(fname, 'r') as file: # File read function
+    with open(f'local_Store/{fname}', 'r') as file: # File read function
         return file.read()
 
 def getStatus():
     return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
+
 p = '}'
 
 class Error(Exception):
@@ -287,7 +288,7 @@ async def gaydar(ctx, user: discord.User):
     Tells you how gay someone is according to Anabot's revolutionary random number generator
     """
     try:
-        with open('local_Store/scores.txt', 'r') as json_file:
+        with open('local_Store/gay.txt', 'r') as json_file:
             scores = json.load(json_file)
     except:
         await ctx.send('ERR')
@@ -300,25 +301,27 @@ async def gaydar(ctx, user: discord.User):
         embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
         score = rand(1,10)
         scores[str(user.id)] = str(score)
-        with open('local_Store/scores.txt', 'w') as outfile:
+        with open('local_Store/gay.txt', 'w') as outfile:
             json.dump(scores, outfile)
-
     msg = await ctx.send(embed=embed)
-    varset = {1: ['{} is as straight as an arrow',0xffffff],
-    2: ['{} is straight',0xffe9ff],
-    3: ['{} is straight... probably',0xffcbff],
-    4: ["I think {}'s straight, but I don't know",0xff97ff],
-    5: ['Actually, I think {} has a bit of gay in them',0xff83ff],
-    6: ["I think {}'s gay, but I don't know",0xff76ff],
-    7: ['{} is probably gay',0xff4eff],
-    8: ['{} is gay',0xff3eff],
-    9: ['{} is definitely gay',0xff21ff],
-    10: ['{} is fabulous~',0xff00ff],
-    -9223372036854775808: ['{} causes an integer overflow error',0xff0000]}.get(score)
-    embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
-    embed.add_field(name = f'Score: {score}', value = f'Do you want to know how gay someone is? Do {p}gaydar [@user].')
     await asyncio.sleep(2)
-    await msg.edit(embed=embed)
+    await msg.edit(embed=getGay(score, user, p))
+
+@bot.command()
+@commands.is_owner()
+async def override(ctx, user: discord.User, cmd, level: int):
+    """
+    Overrides a user's gaydar level
+    """
+    with open(f'local_Store/{cmd}.txt','r') as json_file:
+        scores = json.load(json_file)
+    scores[str(user.id)] = str(level)
+    with open(f'local_Store/{cmd}.txt','w') as outfile:
+        json.dump(scores, outfile)
+    embed=discord.Embed(title = f'Manual override for {user.name}', color = 0xff0000)
+    embed.add_field(name = f"Override on '{cmd}' succesful", value = f"New value: {level}")
+    await ctx.send(embed=embed)
+
 
 @bot.command(name = 'currency', aliases=['forex','convert','money','con'])
 async def currency_(ctx, amount: int, currencyfrom, currencyto):
@@ -334,9 +337,58 @@ async def currency_(ctx, amount: int, currencyfrom, currencyto):
     embed.set_footer(text='Source: Forex')
     await ctx.send(embed=embed)
 
+@bot.command(aliases=['rateme','howhot','smashorpass'])
+async def rate(ctx, user: discord.User):
+    """
+    What does Anabot think of you?
+    """
+    try:
+        with open('local_Store/rate.txt', 'r') as json_file:
+            scores = json.load(json_file)
+    except:
+        await ctx.send('ERR')
+    try:
+        score = int(scores[str(user.id)])
+        embed = discord.Embed(title=f"Someone's already asked about {user.name}. How did I rate them?", color = 0xbdbdbd)
+        embed.add_field(name = 'Fetching...', value = "Please wait, this won't take long.")
+    except:
+        embed = discord.Embed(title=f"Nobody's asked me about {user.name} yet. Let's have a look.", color = 0xbdbdbd)
+        embed.add_field(name = 'Calculating...', value = "Please wait, this won't take long.")
+        score = rand(1,5)
+        scores[str(user.id)] = str(score)
+        with open('local_Store/rate.txt', 'w') as outfile:
+            json.dump(scores, outfile)
+    msg = await ctx.send(embed=embed)
+    await asyncio.sleep(2)
+    await msg.edit(embed=getRate(score, user, p))
 
+def getGay(l, user, prefix):
+    varset = {1: ['{} is as straight as an arrow.',0xffffff],
+    2: ['{} is straight.',0xffe9ff],
+    3: ['{} is straight... probably.',0xffcbff],
+    4: ["I think {}'s straight, but I don't know.",0xff97ff],
+    5: ['Actually, I think {} has a bit of gay in them.',0xff83ff],
+    6: ["I think {}'s gay, but I don't know.",0xff76ff],
+    7: ['{} is probably gay.',0xff4eff],
+    8: ['{} is gay.',0xff3eff],
+    9: ['{} is definitely gay.',0xff21ff],
+    10: ['{} is fabulous~',0xff00ff],
+    -9223372036854775808: ['{} causes an integer overflow error',0xff0000]}.get(l)
+    embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
+    embed.add_field(name = f'Score: {l} out of 10', value = f'Do you want to know how gay someone is? Do {prefix}gaydar [@user].')
+    return embed
 
-tokens = r('local_Store/token.txt').split('\n')
+def getRate(l, user, prefix):
+    varset = {1: ["I really don't want to talk about {}.",0x5fa8ff,'★☆☆☆☆'],
+    2: ["Sorry, {}... but I'll pass.",0xfffb00,'★★☆☆☆'],
+    3: ["{} is okay, that's all I can really say about them.", 0xffc100,'★★★☆☆'],
+    4: ["I think {} is great.", 0xff5900,'★★★★☆'],
+    5: ['{} is literal fire~',0xff3131,'★★★★★']}.get(l)
+    embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
+    embed.add_field(name = f'Rating: {varset[2]}', value = f'Do you want to know what I think about someone? Do {prefix}rate [@user].')
+    return embed
+
+tokens = r('token.txt').split('\n')
 interpret = Translator()
 dictionary = PyDictionary()
 currency = CR()
