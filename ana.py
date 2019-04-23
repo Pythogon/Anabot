@@ -48,44 +48,48 @@ class NAE3(Error): # No Account Error Third Person
 #            Class           #
 ##############################
 
-class ana(commands.Bot): # Let's define our least favourite bot
-    async def on_ready(self): # Setup
+class ana(commands.Bot):
+    """ Let's define our least favourite bot """
+    async def on_ready(self):
+        """ Setup """
         print('Logged on!')
 
         while bot.is_ready():
+            """ Random statusinator """
             await asyncio.sleep(30)
             activity = discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching)
             await bot.change_presence(activity = activity)
 
-    async def on_message(self,message): # Processisng custom features
-        if message.author.bot: # Stopping bot chaining
-            return
+    async def on_message(self,message):
+        """ Let's messagehandle """
+        if message.author.bot:
+            return # Bots don't really exist
         if rand(1,50) == 2:
             try:
-                fpath = f'local_Store/Eco/{message.author.id}'
+                fpath = f'local_Store/Eco/{message.author.id}' # Testing to see if a user has a balance stored
                 data = jsonread(fpath)
             except:
                 embed = discord.Embed(title = f"You just won free Hoops but you don't have a bank account with us, so I can't give them you. To make sure this doesn't happen to you again do {p}daily.", color = 0xff0000)
-                return await message.channel.send(embed=embed)
-            amount = rand(1,10) * 100
-            bal = int(data['bal'])
+                return await message.channel.send(embed=embed) # Instead of not mentioning it, guilt them into making an account with us
+            amount = rand(1,10) * 100 # Random amount 100 - 1000
+            bal = int(data['bal']) # JSON reading
             e = discord.Embed(title = 'Winner!',color = 0x00ff00)
+            bal += amount
             e.add_field(name = f'You just won {amount} free Hoops! Congratulations.', value = 'New balance: ◯{}.'.format(bal))
-            await message.channel.send(embed=e)
-            data['bal'] = str(bal + amount)
-            jsonwrite(fpath, data)
+            await message.channel.send(embed=e) # Telling them how much they just won
+            data['bal'] = str(bal)
+            jsonwrite(fpath, data) # Writing
 
-        alter = message.content.replace(f'<@{self.user.id}>', '')
+        alter = message.content.replace(f'<@{self.user.id}>', '') # Testing for a mention
         if alter is not message.content:
             await message.add_reaction('❤') # Anabot hearter mark 2
-            return
         try:
-            chat = f'{message.author.name} ({message.author.id}) | {message.content}'
+            chat = f'{message.author.name} ({message.author.id}) | {message.content}' # Recording all chat for training and quality purposes
         except:
             chat = 'Err #1' # Used if user uses unicode that the Python parser doesn't like
         print(chat)
 
-        return await bot.process_commands(message) # Command running
+        return await bot.process_commands(message) # Let's see if the user is trying to run a command
     async def on_command_error(self, ctx, error): # Error handling
         embed = discord.Embed(title='Error',color=0xff0000)
         if isinstance(error, commands.BadArgument): # Catching one singular error type (the most common one)
@@ -120,14 +124,14 @@ class ana(commands.Bot): # Let's define our least favourite bot
             msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
             await msg.add_reaction('⭐')
 
-    async def on_guild_join(self, guild):
+    async def on_guild_join(self, guild): # Join message
         count = len(bot.guilds)
         log = bot.get_channel(569264606015520778)
         e = discord.Embed(title = 'Guild joined!', color = 0x00ff00)
         e.add_field(name = f'Joined {guild.name} ({guild.id}).', value = f'New guild count: {count}.')
         await log.send(embed=e)
 
-    async def on_guild_remove(self, guild):
+    async def on_guild_remove(self, guild): # Leave message
         count = len(bot.guilds)
         log = bot.get_channel(569264606015520778)
         e = discord.Embed(title = 'Guild left...', color = 0xff0000)
@@ -139,15 +143,16 @@ bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord
 ##############################
 #             Help           #
 ##############################
-bot.remove_command('help')
-@bot.command(name = 'help')
+bot.remove_command('help') # Removing default help (I don't like it)
+@bot.command(name = 'help') # New help command (help is a registered keyword so we just need to pretend we have a function called 'help')
 async def help_command(ctx):
+    """ Basic bitch help command (by Ciel) """
     text_ = f'{p}help || Anabot v1.0'
-    title_ = discord.Embed(title = 'Help', color = 0x00ff00)
+    title_ = discord.Embed(title = 'Help', color = 0x00ff00) # Title embed
     title_.add_field(name = 'Welcome to Anabot!', value = "I'm here to enhance your experience on the server.", inline = True)
     title_.set_footer(text = text_)
 
-    general = discord.Embed(title = 'General Commands', color = 0x00ff00)
+    general = discord.Embed(title = 'General Commands', color = 0x00ff00) # General commands (+random commands)
     general.add_field(name = f'{p}help', value = 'Shows these messages.', inline = True)
     general.add_field(name = f'{p}ping', value = 'Test bot connection.', inline = True)
     general.add_field(name = f'{p}invite', value = 'Invite the bot to your server!', inline = True)
@@ -155,7 +160,7 @@ async def help_command(ctx):
     general.add_field(name = f'{p}coinflip', value = 'Flip a coin!', inline = True)
     general.set_footer(text = text_)
 
-    utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00)
+    utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00) # Utility commands
     utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
     utility.add_field(name = f'{p}colour [6 letter hex code]', value = 'Visualise any colour or randomly generate one!', inline = True)
     utility.add_field(name = f'{p}avatar <@user>', value = "Fetch  a user's avatar.", inline = True)
@@ -163,7 +168,7 @@ async def help_command(ctx):
     utility.add_field(name = f'{p}currency <amount> <from> <to>', value = 'Convert amounts between currencies (source: Forex).', inline = True)
     utility.set_footer(text = text_)
 
-    fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00)
+    fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00) # Fun stuff
     fun.add_field(name = f'{p}rockpaperscissors <r, p or s>', value = 'Play a friendly game of rock paper scissors with me!', inline = True)
     fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
     fun.add_field(name = f'{p}echo <text>', value = 'Get me to repeat anything you want in an embed.', inline = True)
@@ -171,21 +176,21 @@ async def help_command(ctx):
     fun.add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
     fun.set_footer(text = text_)
 
-    eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00)
+    eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00) # Economy
     eco.add_field(name = f'{p}daily', value = 'Get your daily Hoops or register your user ID into the bank.', inline = True)
     eco.add_field(name = f'{p}balance', value = 'Check your balance. (R)', inline = True)
     eco.add_field(name = f'{p}dicebet', value = 'Bet on the value of a dice and get paid depending on how close you got! (R)', inline = True)
     eco.set_footer(text = text_)
 
-    await ctx.send(embed=title_)
+    await ctx.send(embed=title_) # Let's spam the user!
     await ctx.send(embed=general)
     await ctx.send(embed=utility)
     await ctx.send(embed=fun)
     await ctx.send(embed=eco)
 
-@bot.command(name = 'info')
+@bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
-    e = discord.Embed(title = 'About me:', color = 0x00ffff)
+    e = discord.Embed(title = 'About me:', color = 0x00ffff) # Pretty self explanatory if you look at any documentation ever
     e.add_field(name = 'Owner', value = 'Ciel (User 156019409658314752)')
     e.add_field(name = 'Github Repo', value = 'https://github.com/Pythogon/Anabot')
     await ctx.send(embed=e)
@@ -197,13 +202,11 @@ async def info_(ctx):
 @bot.command(aliases = ['cc'])
 @commands.has_permissions(manage_messages=True)
 async def clearchat(ctx):
-    """
-    Clears chat (Admin only)
-    """
+    """ Fils chat with spamtext to clear it """
     tosend = '-CC-'
     for x in range(300):
-        tosend = f'{tosend}\n-'
-    tosend = f'{tosend}\nCleared chat.'
+        tosend = f'{tosend}\n|| ||'
+    tosend = f'{tosend}\nCleared chat.' # Fake chat clear to do... something I guess?
     await ctx.send(tosend)
 
 ##############################
@@ -213,24 +216,20 @@ async def clearchat(ctx):
 @bot.command()
 @commands.is_owner()
 async def shutdown(ctx):
-    '''
-    Shutdown instance of bot
-    '''
+    """ Closing down a bot instance, doesn't do much """
     embed=discord.Embed(title='Shutting down...',color=0xff0000)
-    embed.add_field(name="Goodbye!", value='To restart me go to the console and do pm2 restart ana.')
+    embed.add_field(name="Goodbye!", value='To restart me go to the console and do pm2 restart ana.') # Pretty useless now but it used to mean something
     await ctx.send(embed=embed)
     exit()
 
 @bot.command()
 @commands.is_owner()
 async def override(ctx, user: discord.User, cmd, level: int):
-    """
-    Overrides a user's gaydar level
-    """
-    fpath = f'local_Store/{cmd}.txt'
-    scores = jsonread(fpath)
+    """ Hacking the database (part 1) """
+    fpath = f'local_Store/{cmd}.txt' # Setting path to the json
+    scores = jsonread(fpath) # Grabbing dictionary data
     scores[str(user.id)] = str(level)
-    json.write(fpath, scores)
+    jsonwrite(fpath, scores) # Forcewrite their score
     embed=discord.Embed(title = f'Manual override for {user.name}:', color = 0xff0000)
     embed.add_field(name = f"Override on '{cmd}' succesful.", value = f"New value: {level}.")
     embed.set_footer(text = 'Make sure nobody finds out about this~')
@@ -239,11 +238,12 @@ async def override(ctx, user: discord.User, cmd, level: int):
 @bot.command()
 @commands.is_owner()
 async def manipulate(ctx, user: discord.User, variable, value):
-    fpath = f'local_Store/Eco/{ctx.author.id}'
+    """ Hacking the database (part 2) See comments on part 1 for more info """
+    fpath = f'local_Store/Eco/{user.id}'
     try:
         data = jsonread(fpath)
     except:
-        raise NAE3
+        raise NAE3 # Doesn't do anything
     data[variable] = value
     jsonwrite(fpath,data)
     embed=discord.Embed(title = f'Manual override for {user.name}:', color = 0xff0000)
@@ -253,6 +253,7 @@ async def manipulate(ctx, user: discord.User, variable, value):
 @bot.command()
 @commands.is_owner()
 async def forceleave(ctx, guildid: int):
+    """ Leaves a guild based on ID, who knows, might need it some day """
     toleave = bot.get_guild(guildid)
     await toleave.leave()
 
@@ -262,22 +263,18 @@ async def forceleave(ctx, guildid: int):
 
 @bot.command(aliases = ['test'])
 async def ping(ctx):
-    """
-    Test if the bot is up
-    """
+    """ Basic ping message, pretty easy to understand looking at all the other things """
     embed=discord.Embed(title="Pong!", color=0x00ff40)
     embed.add_field(name="I'm here!", value=f'Do {p}help to learn about what I can do.', inline=True)
     await ctx.send(embed=embed)
 
 @bot.command()
 async def invite(ctx):
-    """
-    Invite users to the server!
-    """
+    """ Inviting users to the server and inviting bot to servers """~
     embed=discord.Embed(title="Invite the bot to your server!", url="https://discordapp.com/oauth2/authorize?client_id=567418835976847360&scope=bot&permissions=8", color=0x00ffff)
     e = discord.Embed(title='Join our Discord server for fun times and updates.', url = 'https://discord.gg/Vfyc358/', color = 0x00ffff)
     await ctx.send(embed=embed)
-    await ctx.send(embed=e)
+    await ctx.send(embed=e) # 2 embeds, oo fancy
 
 ##############################
 #           Random           #
@@ -327,15 +324,14 @@ async def translate(ctx, to, source, *text):
         await ctx.send(embed=embed)
 
 @bot.command(name='colour', aliases = ['color'])
-async def colour_(ctx, *colour):
+async def colour_(ctx, *colour: str):
     """
     Visualise a hex code
     """
     try:
-        if colour == ():
+        if colour == '':
             reason = 0
             raise ValueError
-        colour = ''.join(list(colour))
         try:
             int(colour,16)
         except:
@@ -403,6 +399,7 @@ async def currency_(ctx, amount: int, currencyfrom, currencyto):
     embed.add_field(name='{} {} is {:.2f} {}'.format(amount,currencyfrom,end,currencyto),value='Rate: 1 {} to {:.2f} {}'.format(currencyfrom,rate,currencyto))
     embed.set_footer(text='Source: Forex')
     await ctx.send(embed=embed)
+
 
 ##############################
 #             Fun            #
@@ -626,7 +623,12 @@ def getGay(l, user, prefix):
     return embed
 
 def getRate(l, user, prefix):
-    varset = {0: ["I wouldn't touch {} with a 10 foot pole.", 0x46ff00,'☆☆☆☆☆'],1: ["I really don't want to talk about {}.",0x5fa8ff,'★☆☆☆☆'],2: ["Sorry, {}... but I'll pass.",0xfffb00,'★★☆☆☆'],3: ["{} is okay, that's all I can really say about them.", 0xffc100,'★★★☆☆'],4: ["I think {} is great.", 0xff5900,'★★★★☆'],5: ['{} is literal fire~',0xff3131,'★★★★★']}.get(l)
+    varset = {0: ["I wouldn't touch {} with a 10 foot pole.", 0x46ff00,'☆☆☆☆☆'],
+    1: ["I really don't want to talk about {}.",0x5fa8ff,'★☆☆☆☆'],
+    2: ["Sorry, {}... but I'll pass.",0xfffb00,'★★☆☆☆'],
+    3: ["{} is okay, that's all I can really say about them.", 0xffc100,'★★★☆☆'],
+    4: ["I think {} is great.", 0xff5900,'★★★★☆'],
+    5: ['{} is literal fire~',0xff3131,'★★★★★']}.get(l)
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Rating: {varset[2]}', value = f'Do you want to know what I think about someone? Do {prefix}rate [@user].')
     return embed
