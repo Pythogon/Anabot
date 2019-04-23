@@ -179,7 +179,7 @@ async def funhelp(ctx):
     fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
     fun.add_field(name = f'{p}echo <text>', value = 'Get me to repeat anything you want in an embed.', inline = True)
     fun.add_field(name = f'{p}gaydar <@user>', value = 'Tells you how gay someone is.', inline = True)
-    fun add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
+    fun.add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
     fun.set_footer(text = text_)
     await ctx.send(embed = fun)
 
