@@ -27,7 +27,7 @@ def jsonwrite(fpath, data):
 def getStatus():
     return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
 
-p = '?'
+p = '}'
 
 ##############################
 #           Errors           #
