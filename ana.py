@@ -27,7 +27,7 @@ def jsonwrite(fpath, data):
 def getStatus():
     return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
 
-p = '}'
+p = '?'
 
 ##############################
 #           Errors           #
@@ -112,17 +112,14 @@ class ana(commands.Bot):
             embed.set_footer(text=f'Tell them to run {p}daily.')
             return await ctx.send(embed=embed)
 
-    async def on_reaction_add(self, reaction, user): # Listening for reactions
+    async def on_reaction_add(self, reaction, user):
+        """ Listening for reactions """
         message = reaction.message # Getting Message objext
         if message.author.bot:
             return # Bots can't have anything special
         if message.channel.id == 567685702205046785:
             await message.add_reaction(reaction.emoji) # Polls
             return
-        starboard = bot.get_channel(568450985098215425) # This doesn't work right now
-        if len(message.reactions) == 3:
-            msg = await starboard.send(f'{message.author.name} ({message.author.id}) | {message.content}')
-            await msg.add_reaction('⭐')
 
     async def on_guild_join(self, guild): # Join message
         count = len(bot.guilds)
@@ -149,9 +146,12 @@ async def help_command(ctx):
     """ Basic bitch help command (by Ciel) """
     text_ = f'{p}help || Anabot v1.0'
     title_ = discord.Embed(title = 'Help', color = 0x00ff00) # Title embed
-    title_.add_field(name = 'Welcome to Anabot!', value = "I'm here to enhance your experience on the server.", inline = True)
+    title_.add_field(name = 'Welcome to Anabot!', value = f"To see commands, do {p}<category>help. \nCommands: \n1. {p}generalhelp \n2. {p}utilityhelp \n3. {p}funhelp \n4. {p}ecohelp \n5. {p}adminhelp", inline = True)
     title_.set_footer(text = text_)
+    await ctx.send(embed = title_)
 
+@bot.command()
+async def generalhelp(ctx):
     general = discord.Embed(title = 'General Commands', color = 0x00ff00) # General commands (+random commands)
     general.add_field(name = f'{p}help', value = 'Shows these messages.', inline = True)
     general.add_field(name = f'{p}ping', value = 'Test bot connection.', inline = True)
@@ -159,7 +159,10 @@ async def help_command(ctx):
     general.add_field(name = f'{p}dice <sides>', value = 'Rolls a dice with given number of sides (default is 6).', inline = True)
     general.add_field(name = f'{p}coinflip', value = 'Flip a coin!', inline = True)
     general.set_footer(text = text_)
+    await ctx.send(embed = general)
 
+@bot.command()
+async def utilityhelp(ctx):
     utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00) # Utility commands
     utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
     utility.add_field(name = f'{p}colour [6 letter hex code]', value = 'Visualise any colour or randomly generate one!', inline = True)
@@ -167,26 +170,27 @@ async def help_command(ctx):
     utility.add_field(name = f'{p}dictionary <word>', value = 'Define a word (source: WordNet).', inline = True)
     utility.add_field(name = f'{p}currency <amount> <from> <to>', value = 'Convert amounts between currencies (source: Forex).', inline = True)
     utility.set_footer(text = text_)
+    await ctx.send(embed = utility)
 
+@bot.command()
+async def funhelp(ctx):
     fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00) # Fun stuff
     fun.add_field(name = f'{p}rockpaperscissors <r, p or s>', value = 'Play a friendly game of rock paper scissors with me!', inline = True)
     fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
     fun.add_field(name = f'{p}echo <text>', value = 'Get me to repeat anything you want in an embed.', inline = True)
     fun.add_field(name = f'{p}gaydar <@user>', value = 'Tells you how gay someone is.', inline = True)
-    fun.add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
+    fun add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
     fun.set_footer(text = text_)
+    await ctx.send(embed = fun)
 
+@bot.command()
+async def ecohelp(ctx):
     eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00) # Economy
     eco.add_field(name = f'{p}daily', value = 'Get your daily Hoops or register your user ID into the bank.', inline = True)
     eco.add_field(name = f'{p}balance', value = 'Check your balance. (R)', inline = True)
     eco.add_field(name = f'{p}dicebet', value = 'Bet on the value of a dice and get paid depending on how close you got! (R)', inline = True)
     eco.set_footer(text = text_)
-
-    await ctx.send(embed=title_) # Let's spam the user!
-    await ctx.send(embed=general)
-    await ctx.send(embed=utility)
-    await ctx.send(embed=fun)
-    await ctx.send(embed=eco)
+    await ctx.send(embed = eco)
 
 @bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
@@ -270,7 +274,7 @@ async def ping(ctx):
 
 @bot.command()
 async def invite(ctx):
-    """ Inviting users to the server and inviting bot to servers """~
+    """ Inviting users to the server and inviting bot to servers """
     embed=discord.Embed(title="Invite the bot to your server!", url="https://discordapp.com/oauth2/authorize?client_id=567418835976847360&scope=bot&permissions=8", color=0x00ffff)
     e = discord.Embed(title='Join our Discord server for fun times and updates.', url = 'https://discord.gg/Vfyc358/', color = 0x00ffff)
     await ctx.send(embed=embed)
