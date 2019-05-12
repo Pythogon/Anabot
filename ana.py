@@ -27,7 +27,7 @@ def jsonwrite(fpath, data):
         json.dump(data,outfile)
 
 def getStatus():
-    return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language'}.get(rand(1,5))
+    return {1: 'over things',2: 'Netflix',3: 'you',4: 'the data stream', 5: 'the cats', 6: 'Dekeullan', 7: 'the stars', 8: 'my language', 9: 'out for cats'}.get(rand(1,9))
 
 p = '}'
 
@@ -627,7 +627,7 @@ async def feed(ctx):
     try:
         data = jsonread(fpath)
     except:
-        embed = discord.Embed(title = 'Feeding time for...', color =0xff0000)
+        embed = discord.Embed(title = 'Feeding time for...', color = 0xff0000)
         embed.add_field(name = 'No pet found.', value = f'Do {p}stats to get a pet.')
         return await ctx.send(embed=embed)
     score = int(data['rp'])
