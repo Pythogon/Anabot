@@ -1,16 +1,17 @@
 ##############################
 #             Ana            #
 ##############################
-
 import asyncio,os,discord,json # Importing
-from discord.ext import commands
+
+from datetime import datetime
 from random import randint as rand
+
+from discord.ext import commands
 from py_translator import Translator
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
 from forex_python.converter import CurrencyRates as CR
-from datetime import datetime
 
 def r(fname):
     with open(f'local_Store/{fname}', 'r') as file: # File read function
@@ -136,6 +137,7 @@ class ana(commands.Bot):
         await log.send(embed=e)
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
+text_ = f'{p}help || Anabot v1.0'
 
 ##############################
 #             Help           #
@@ -144,14 +146,13 @@ bot.remove_command('help') # Removing default help (I don't like it)
 @bot.command(name = 'help') # New help command (help is a registered keyword so we just need to pretend we have a function called 'help')
 async def help_command(ctx):
     """ Basic bitch help command (by Ciel) """
-    text_ = f'{p}help || Anabot v1.0'
-    title_ = discord.Embed(title = 'Help', color = 0x00ff00) # Title embed
-    title_.add_field(name = 'Welcome to Anabot!', value = f"To see commands, do {p}<category>help. \nCommands: \n1. {p}generalhelp \n2. {p}utilityhelp \n3. {p}funhelp \n4. {p}ecohelp \n5. {p}adminhelp", inline = True)
-    title_.set_footer(text = text_)
-    await ctx.send(embed = title_)
+    title = discord.Embed(title = 'Help', color = 0x00ff00) # Title embed
+    title.add_field(name = 'Welcome to Anabot!', value = f"To see commands, do {p}<category>. \nCommands: \n1. {p}general \n2. {p}utility \n3. {p}fun \n4. {p}eco", inline = True)
+    title.set_footer(text = text_)
+    await ctx.send(embed = title)
 
-@bot.command()
-async def generalhelp(ctx):
+@bot.command(name = 'general')
+async def general_help(ctx):
     general = discord.Embed(title = 'General Commands', color = 0x00ff00) # General commands (+random commands)
     general.add_field(name = f'{p}help', value = 'Shows these messages.', inline = True)
     general.add_field(name = f'{p}ping', value = 'Test bot connection.', inline = True)
@@ -161,9 +162,9 @@ async def generalhelp(ctx):
     general.set_footer(text = text_)
     await ctx.send(embed = general)
 
-@bot.command()
-async def utilityhelp(ctx):
-    utility = discord.Embed(title = 'Utility Commands', color = 0x00ff00) # Utility commands
+@bot.command(name = 'utility')
+async def utility_help(ctx):
+    utility = discord.Embed(title='Utility Commands', color=0x00ff00) # Utility commands
     utility.add_field(name = f'{p}translate <to> <text>', value = 'Translate anything quickly and easily.', inline = True)
     utility.add_field(name = f'{p}colour [6 letter hex code]', value = 'Visualise any colour or randomly generate one!', inline = True)
     utility.add_field(name = f'{p}avatar <@user>', value = "Fetch  a user's avatar.", inline = True)
@@ -172,8 +173,8 @@ async def utilityhelp(ctx):
     utility.set_footer(text = text_)
     await ctx.send(embed = utility)
 
-@bot.command()
-async def funhelp(ctx):
+@bot.command(name = 'fun')
+async def fun_help(ctx):
     fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00) # Fun stuff
     fun.add_field(name = f'{p}rockpaperscissors <r, p or s>', value = 'Play a friendly game of rock paper scissors with me!', inline = True)
     fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
@@ -183,8 +184,8 @@ async def funhelp(ctx):
     fun.set_footer(text = text_)
     await ctx.send(embed = fun)
 
-@bot.command()
-async def ecohelp(ctx):
+@bot.command(name = 'eco')
+async def eco_help(ctx):
     eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00) # Economy
     eco.add_field(name = f'{p}daily', value = 'Get your daily Hoops or register your user ID into the bank.', inline = True)
     eco.add_field(name = f'{p}balance', value = 'Check your balance. (R)', inline = True)
