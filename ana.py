@@ -141,7 +141,7 @@ class ana(commands.Bot):
         await log.send(embed=e)
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
-text_ = f'{p}help || Anabot v1.0  (# = must own a pet, * = must have a bank account)'
+text_ = f'{p}help || Anabot v1.0  (^ = must own a pet, * = must have a bank account)'
 
 ##############################
 #             Help           #
@@ -201,9 +201,9 @@ async def eco_help(ctx):
 async def pet_help(ctx):
     pet = discord.Embed(title = 'Pets', color = 0x00ff00)
     pet.add_field(name = f'{p}stats', value = "Check your pet's stats or get one if you don't have one!")
+    pet.add_field(name = f'{p}feed', value = "Feed your pet to bond with them!^")
     pet.set_footer(text = text_)
     await ctx.send (embed = pet)
-
 
 @bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
@@ -218,12 +218,9 @@ async def info_(ctx):
 
 @bot.command()
 @commands.is_owner()
-async def shutdown(ctx):
-    """ Closing down a bot instance, doesn't do much """
-    embed=discord.Embed(title='Shutting down...',color=0xff0000)
-    embed.add_field(name="Goodbye!", value='To restart me go to the console and do pm2 restart ana.') # Pretty useless now but it used to mean something
-    await ctx.send(embed=embed)
-    exit()
+async def restart(ctx):
+    os.system('git pull')
+    os.system('pm2 restart ana')
 
 @bot.command()
 @commands.is_owner()
@@ -623,6 +620,27 @@ async def stats(ctx):
     embed.set_footer(text = f'Do {p}pet for help on pets.')
     await ctx.send(embed=embed)
 
+@bot.command()
+@commands.cooldown(1, 3600*5, commands.BucketType.user)
+async def feed(ctx):
+    fpath = f'local_Store/Pets/{ctx.author.id}'
+    try:
+        data = jsonread(fpath)
+    except:
+        embed = discord.Embed(title = 'Feeding time for...', color =0xff0000)
+        embed.add_field(name = 'No pet found.', value = f'Do {p}stats to get a pet.')
+        return await ctx.send(embed=embed)
+    score = int(data['rp'])
+    rp_increase = rand(2,5)*10
+    e = int(data['rp'])
+    name = data['name']
+    data['rp'] = str(e + rp_increase)
+    rp = data['rp']
+    embed = discord.Embed(title = f'Feeding time for {name}!')
+    embed.add_field(name = f'+{rp_increase} RP!', value = f'New RP: {rp}.')
+    embed.set_footer(text = 'You can come back in 5 hours.')
+    await ctx.send(embed = embed)
+    jsonwrite(fpath, data)
 
 ##############################
 #          Functions         #
