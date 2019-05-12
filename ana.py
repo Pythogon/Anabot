@@ -12,6 +12,7 @@ from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 from PyDictionary import PyDictionary
 from forex_python.converter import CurrencyRates as CR
+from names import get_first_name
 
 def r(fname):
     with open(f'local_Store/{fname}', 'r') as file: # File read function
@@ -109,8 +110,11 @@ class ana(commands.Bot):
             embed.set_footer(text=f'To order something, do {p}order [your order].')
             return await ctx.send(embed=embed)
         if isinstance(error, NAE3):
-            embed.add_field(name="No account", value=f"The person you're trying to interract with doesn't have an account.")
+            embed.add_field(name="No account", value="The person you're trying to interract with doesn't have an account.")
             embed.set_footer(text=f'Tell them to run {p}daily.')
+            return await ctx.send(embed=embed)
+        if isinstance(error, commands.CommandOnCooldown):
+            embed.add_field(name="Command on cooldown", value = "You can't use this command again yet.")
             return await ctx.send(embed=embed)
 
     async def on_reaction_add(self, reaction, user):
@@ -137,7 +141,7 @@ class ana(commands.Bot):
         await log.send(embed=e)
 
 bot = ana(activity=discord.Activity(name=f'{getStatus()} | {p}help',type=discord.ActivityType.watching), command_prefix=p)
-text_ = f'{p}help || Anabot v1.0'
+text_ = f'{p}help || Anabot v1.0  (# = must own a pet, * = must have a bank account)'
 
 ##############################
 #             Help           #
@@ -186,12 +190,20 @@ async def fun_help(ctx):
 
 @bot.command(name = 'eco')
 async def eco_help(ctx):
-    eco = discord.Embed(title = 'Economy (R = must be registered with the bank)', color = 0x00ff00) # Economy
+    eco = discord.Embed(title = 'Economy', color = 0x00ff00) # Economy
     eco.add_field(name = f'{p}daily', value = 'Get your daily Hoops or register your user ID into the bank.', inline = True)
-    eco.add_field(name = f'{p}balance', value = 'Check your balance. (R)', inline = True)
-    eco.add_field(name = f'{p}dicebet', value = 'Bet on the value of a dice and get paid depending on how close you got! (R)', inline = True)
+    eco.add_field(name = f'{p}balance', value = 'Check your balance.*', inline = True)
+    eco.add_field(name = f'{p}dicebet', value = 'Bet on the value of a dice and get paid depending on how close you got!*', inline = True)
     eco.set_footer(text = text_)
     await ctx.send(embed = eco)
+
+@bot.command(name = 'pet')
+async def pet_help(ctx):
+    pet = discord.Embed(title = 'Pets', color = 0x00ff00)
+    pet.add_field(name = f'{p}stats', value = "Check your pet's stats or get one if you don't have one!")
+    pet.set_footer(text = text_)
+    await ctx.send (embed = pet)
+
 
 @bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
@@ -199,20 +211,6 @@ async def info_(ctx):
     e.add_field(name = 'Owner', value = 'Ciel (User 156019409658314752)')
     e.add_field(name = 'Github Repo', value = 'https://github.com/Pythogon/Anabot')
     await ctx.send(embed=e)
-
-##############################
-#           Admin            #
-##############################
-
-@bot.command(aliases = ['cc'])
-@commands.has_permissions(manage_messages=True)
-async def clearchat(ctx):
-    """ Fils chat with spamtext to clear it """
-    tosend = '-CC-'
-    for x in range(300):
-        tosend = f'{tosend}\n|| ||'
-    tosend = f'{tosend}\nCleared chat.' # Fake chat clear to do... something I guess?
-    await ctx.send(tosend)
 
 ##############################
 #           Owner            #
@@ -521,27 +519,21 @@ async def rate(ctx, user: discord.User):
 ##############################
 
 @bot.command()
+@commands.cooldown(1, 60*60*24, commands.BucketType.user)
 async def daily(ctx):
     fpath = f'local_Store/Eco/{ctx.author.id}'
     try:
         data = jsonread(fpath)
     except:
-        default = {'bal': '0', 'lastdaily': '00000000'}
+        default = {'bal': '0'}
         jsonwrite(fpath, default)
         data = jsonread(fpath)
         e = discord.Embed(title = 'No bank account found.', color = 0xff0000)
         e.add_field(name = 'Generating new account file...', value = 'Please wait with me.')
         await ctx.send(embed=e)
     bal = int(data['bal'])
-    now = datetime.utcnow()
-    currentdaily = '{}{}{}'.format(now.year,now.month,now.day)
-    if data['lastdaily'] == currentdaily:
-        e = discord.Embed(title = 'Error', color = 0xff0000)
-        e.add_field(name = "You've already claimed your daily today.", value = 'Come back tomorrow!')
-        return await ctx.send(embed=e)
     bal += 1000
     data['bal'] = str(bal)
-    data['lastdaily'] = currentdaily
     jsonwrite(fpath, data)
     e = discord.Embed(title = 'Success!', color = 0x00ffff)
     e.add_field(name = 'Okay, your daily has been succesfully added to your account.', value = f'New balance: ◯{bal}.')
@@ -606,6 +598,31 @@ async def dicebet(ctx, choice: int, bet: int):
     jsonwrite(fpath, data)
     await ctx.send(embed=embed)
 
+##############################
+#             Pet            #
+##############################
+
+@bot.command()
+async def stats(ctx):
+    fpath = f'local_Store/Pets/{ctx.author.id}'
+    try:
+        data = jsonread(fpath)
+    except:
+        embed = discord.Embed(title = 'Pet Stats')
+        embed.add_field(name = 'No pet found!', value = 'Generating a new one...')
+        await ctx.send(embed=embed)
+        data = {}
+        data['name'] = get_first_name()
+        data['personality'] = rand(1,5)
+        data['rp'] = "0"
+        jsonwrite(fpath, data)
+    embed = discord.Embed(title = 'Pet Stats', color = 0x46ff00)
+    embed.add_field(name = 'Name:', value = data['name'])
+    embed.add_field(name = "Personality:", value = getName(int(data['personality'])))
+    embed.add_field(name = "Relationship Points (RP):", value = data['rp'])
+    embed.set_footer(text = f'Do {p}pet for help on pets.')
+    await ctx.send(embed=embed)
+
 
 ##############################
 #          Functions         #
@@ -637,6 +654,9 @@ def getRate(l, user, prefix):
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Rating: {varset[2]}', value = f'Do you want to know what I think about someone? Do {prefix}rate [@user].')
     return embed
+
+def getName(l):
+    return {1: 'Calm', 2: 'Friendly', 3: 'Fun', 4: 'Excitable', 5: 'Hyper'}.get(l)
 
 ##############################
 #             Run            #
