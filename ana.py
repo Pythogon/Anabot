@@ -181,7 +181,6 @@ async def utility_help(ctx):
 async def fun_help(ctx):
     fun = discord.Embed(title = 'Fun and Games', color = 0x00ff00) # Fun stuff
     fun.add_field(name = f'{p}rockpaperscissors <r, p or s>', value = 'Play a friendly game of rock paper scissors with me!', inline = True)
-    fun.add_field(name = f'{p}order <food>', value = 'Order food from FoodNet.', inline = True)
     fun.add_field(name = f'{p}echo <text>', value = 'Get me to repeat anything you want in an embed.', inline = True)
     fun.add_field(name = f'{p}gaydar <@user>', value = 'Tells you how gay someone is.', inline = True)
     fun.add_field(name = f'{p}rate <@user>', value = 'Rates someone out of 5 stars.', inline = True)
@@ -436,22 +435,6 @@ async def rockpaperscissors(ctx, rps):
     embed.add_field(name=f'I picked {msg}', value=comment, inline=True)
     await ctx.send(embed=embed)
 
-
-@bot.command(name='order', aliases = ['food','foodme'])
-async def order_(ctx, *order):
-    """
-    Order food from FoodNet
-    """
-    kitchen = bot.get_channel(567702425717178391)
-    if order == ():
-        raise NothingOrderedError
-    order = ' '.join(list(order))
-    embed = discord.Embed(title='Order processed!',color=0x00ff40)
-    embed.add_field(name="We'll get that delivered ASAP.",value="Please keep in mind it may take longer if we aren't available.")
-    await ctx.send(embed=embed)
-    staff_message=discord.Embed(title='New order!',color=0xffffff)
-    staff_message.add_field(name=f'{ctx.author.name} ordered {order} in #{ctx.channel.name}.',value='Get to work~')
-    await kitchen.send(embed=staff_message)
 
 @bot.command(aliases=['copy','repeat'])
 async def echo(ctx, *tosay):
