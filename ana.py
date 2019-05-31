@@ -84,7 +84,7 @@ class ana(commands.Bot):
         if alter is not message.content:
             await message.add_reaction('❤') # Anabot hearter mark 2
         try:
-            chat = f'{message.author.name} ({message.channel.name}) | {message.content}' # Recording all chat for training and quality purposes
+            chat = f'{message.author.name} ({message.channel.name} | {message.guild.name}) | {message.content}' # Recording all chat for training and quality purposes
         except:
             chat = 'Err #1' # Used if user uses unicode that the Python parser doesn't like
         print(chat)
