@@ -66,20 +66,6 @@ class ana(commands.Bot):
         """ Let's messagehandle """
         if message.author.bot:
             return # Bots don't really exist
-        if rand(1,50) == 2:
-            try:
-                fpath = f'local_Store/Eco/{message.author.id}' # Testing to see if a user has a balance stored
-                data = jsonread(fpath)
-            except:
-                embed = discord.Embed(title = f"You just won free Hoops but you don't have a bank account with us, so I can't give them you. To make sure this doesn't happen to you again do {p}daily.", color = 0xff0000)
-            amount = rand(1,10) * 100 # Random amount 100 - 1000
-            bal = int(data['bal']) # JSON reading
-            e = discord.Embed(title = 'Winner!',color = 0x00ff00)
-            bal += amount
-            e.add_field(name = f'You just won {amount} free Hoops! Congratulations.', value = 'New balance: ◯{}.'.format(bal))
-            data['bal'] = str(bal)
-            jsonwrite(fpath, data) # Writing
-
         alter = message.content.replace(f'<@{self.user.id}>', '') # Testing for a mention
         if alter is not message.content:
             await message.add_reaction('❤') # Anabot hearter mark 2
