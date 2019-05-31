@@ -72,13 +72,11 @@ class ana(commands.Bot):
                 data = jsonread(fpath)
             except:
                 embed = discord.Embed(title = f"You just won free Hoops but you don't have a bank account with us, so I can't give them you. To make sure this doesn't happen to you again do {p}daily.", color = 0xff0000)
-                return await message.channel.send(embed=embed) # Instead of not mentioning it, guilt them into making an account with us
             amount = rand(1,10) * 100 # Random amount 100 - 1000
             bal = int(data['bal']) # JSON reading
             e = discord.Embed(title = 'Winner!',color = 0x00ff00)
             bal += amount
             e.add_field(name = f'You just won {amount} free Hoops! Congratulations.', value = 'New balance: ◯{}.'.format(bal))
-            await message.channel.send(embed=e) # Telling them how much they just won
             data['bal'] = str(bal)
             jsonwrite(fpath, data) # Writing
 
@@ -86,7 +84,7 @@ class ana(commands.Bot):
         if alter is not message.content:
             await message.add_reaction('❤') # Anabot hearter mark 2
         try:
-            chat = f'{message.author.name} ({message.author.id}) | {message.content}' # Recording all chat for training and quality purposes
+            chat = f'{message.author.name} ({message.channel.name}) | {message.content}' # Recording all chat for training and quality purposes
         except:
             chat = 'Err #1' # Used if user uses unicode that the Python parser doesn't like
         print(chat)
