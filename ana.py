@@ -80,11 +80,11 @@ class ana(commands.Bot):
         embed = discord.Embed(title='Error',color=0xff0000)
         if isinstance(error, commands.BadArgument): # Catching one singular error type (the most common one)
             embed.add_field(name='Bad argument',value="This command either needs an argument or the argument entered isn't quite right.") # Message
-            embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ciel as this might be a bug.")
+            embed.set_footer(text=f"Please try again or read {p}help if you keep getting this message. If you're sure you're doing it correctly contact Ash as this might be a bug.")
             return await ctx.send(embed = embed) # Send
         if isinstance(error, commands.CheckFailure): # These are pretty self explanatory
             embed.add_field(name='No permissions',value="Sorry, but you don't have permission to use this command.")
-            embed.set_footer(text=f'Read {p}help to see what commands you can run. If you believe this is a mistake contact Ciel as this might be a bug.')
+            embed.set_footer(text=f'Read {p}help to see what commands you can run. If you believe this is a mistake contact Ash as this might be a bug.')
             return await ctx.send(embed=embed)
         if isinstance(error, RNAE):
             embed.add_field(name='Incorrect currency codes',value="Sorry, but the currency codes you entered aren't correct.")
@@ -133,7 +133,7 @@ text_ = f'{p}help || Anabot v1.0  (^ = must own a pet, * = must have a bank acco
 bot.remove_command('help') # Removing default help (I don't like it)
 @bot.command(name = 'help') # New help command (help is a registered keyword so we just need to pretend we have a function called 'help')
 async def help_command(ctx):
-    """ Basic bitch help command (by Ciel) """
+    """ Basic bitch help command (by Ash) """
     title = discord.Embed(title = 'Help', color = 0x00ff00) # Title embed
     title.add_field(name = 'Welcome to Anabot!', value = f"To see commands, do {p}<category>. \nCommands: \n1. {p}general \n2. {p}utility \n3. {p}fun \n4. {p}eco", inline = True)
     title.set_footer(text = text_)
@@ -191,7 +191,7 @@ async def pet_help(ctx):
 @bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
     e = discord.Embed(title = 'About me:', color = 0x00ffff) # Pretty self explanatory if you look at any documentation ever
-    e.add_field(name = 'Owner', value = 'Ciel (User 156019409658314752)')
+    e.add_field(name = 'Owner', value = 'Ash (User 156019409658314752)')
     e.add_field(name = 'Github Repo', value = 'https://github.com/Pythogon/Anabot')
     await ctx.send(embed=e)
 
@@ -511,7 +511,7 @@ async def balance(ctx):
     except:
         embed = discord.Embed(title = 'Error', color = 0xff0000)
         embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
-        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
+        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ash.")
         return await ctx.send(embed=embed)
     bal = data['bal']
     e = discord.Embed(title = 'Your balance:', color = 0x00ffff)
@@ -535,7 +535,7 @@ async def dicebet(ctx, choice: int, bet: int):
     except:
         embed = discord.Embed(title = 'Error', color = 0xff0000)
         embed.add_field(name="No account", value=f"You don't have an account. Do {p}daily to make one.")
-        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ciel.")
+        embed.set_footer(text = "If you're sure you definitely set up an account, contact Ash.")
         return await ctx.send(embed=embed)
     bal = int(data['bal'])
     if bet > bal: raise DebtError
