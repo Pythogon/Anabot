@@ -191,7 +191,7 @@ async def pet_help(ctx):
 @bot.command(name = 'info') # Info about the bot
 async def info_(ctx):
     e = discord.Embed(title = 'About me:', color = 0x00ffff) # Pretty self explanatory if you look at any documentation ever
-    e.add_field(name = 'Owner', value = 'Ash (User 156019409658314752)')
+    e.add_field(name = 'Owner', value = 'Ásh (User 156019409658314752)')
     e.add_field(name = 'Github Repo', value = 'https://github.com/Pythogon/Anabot')
     await ctx.send(embed=e)
 
