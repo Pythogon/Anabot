@@ -647,8 +647,8 @@ def getName(l):
 #             Run            #
 ##############################
 
-tokens = r('token.txt').split('\n')
+tokens = r('token.txt').strip()
 interpret = Translator()
 dictionary = PyDictionary()
 currency = CR()
-bot.run(tokens[0])
+bot.run(tokens)
