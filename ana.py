@@ -207,7 +207,7 @@ async def restart(ctx):
 
 @bot.command()
 @commands.is_owner()
-async def override(ctx, user: discord.User, cmd, level: int):
+async def ratemanip(ctx, user: discord.User, cmd, level: int):
     """ Hacking the database (part 1) """
     fpath = f'local_Store/{cmd}.txt' # Setting path to the json
     scores = jsonread(fpath) # Grabbing dictionary data
@@ -220,7 +220,7 @@ async def override(ctx, user: discord.User, cmd, level: int):
 
 @bot.command()
 @commands.is_owner()
-async def manipulate(ctx, user: discord.User, variable, value):
+async def ecomanip(ctx, user: discord.User, variable, value):
     """ Hacking the database (part 2) See comments on part 1 for more info """
     fpath = f'local_Store/Eco/{user.id}'
     try:
