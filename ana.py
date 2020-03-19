@@ -636,7 +636,7 @@ def getRate(l, user, prefix):
     3: ["{} is okay, that's all I can really say about them.", 0xffc100,'★★★☆☆'],
     4: ["I think {} is great.", 0xff5900,'★★★★☆'],
     5: ['{} is literal fire~',0xff3131,'★★★★★'],
-    6: ['{} is too cute for words~'],0xff0000,'★★★★★★'}.get(l)
+    6: ['{} is too cute for words~',0xff0000,'★★★★★★']}.get(l)
     embed = discord.Embed(title = varset[0].format(user.name), color = varset[1])
     embed.add_field(name = f'Rating: {varset[2]}', value = f'Do you want to know what I think about someone? Do {prefix}rate [@user].')
     return embed
